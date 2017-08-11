@@ -1,0 +1,102 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+
+<dom-module id="color-adapter">
+  <script>
+  (function() {
+    /** @private {RegExp} */
+    var validHexColorRegExp = /^#(?:[0-9a-f]{3}){1,2}$/i;
+
+
+    /** @private {RegExp} */
+    var hexTripletRegExp = /#(.)(.)(.)/;
+    
+    
+    /**
+     * Test if a string is a valid hex color.
+     * @param {string} str
+     * @return {boolean}
+     */
+    function isValidHexColor(str) {
+      return validHexColorRegExp.test(str);
+    }
+
+
+    /**
+     * Attempts to work out the hex color and convert it to standard form.
+     * @param {string} heColor
+     * @return {string}
+     */
+    function normalizeHex(hexColor) {
+      if (!isValidHexColor(hexColor)) throw new Error(hexColor + 
+          ' is not a valid hex color.');
+      // short form - #A93 etc.
+      if (hexColor.length == 4) {
+        hexColor = hexColor.replace(hexTripletRegExp, '#$1$1$2$2$3$3');
+      }
+      return hexColor.toLowerCase();
+    }
+
+
+    /**
+     * Allows to add leading zero in the hex format.
+     * @param {string} hex The octet part.
+     * @return {string} Padded octet.
+     */
+    function prependZeroIfNecessaryHelper(hex) {
+      return hex.length == 1 ? '0' + hex : hex;
+    }
+
+    Polymer({
+      is: 'color-adapter',
+
+
+      /**
+       * Converts #HEX or #HHEEXX colors to RGB array.
+       * @param {string} hex
+       * @return {Array<number>}
+       */
+      hetToRgb: function(hex) {
+        var hexColor = normalizeHex(hex);
+        return [
+          parseInt(hexColor.substr(1, 2), 16),
+          parseInt(hexColor.substr(3, 2), 16),
+          parseInt(hexColor.substr(5, 2), 16)
+        ];
+      },
+
+
+      /** 
+       * Convert RGB array to hex CSS color.
+       * @param {Array<number>} rgb The [r, g, b] value.
+       * @return {string}
+       */
+      rgbArrayToHex: function(rgb) {
+        return this.rgbToHex(rgb[0], rgb[1], rgb[2]);
+      },
+
+
+      /**
+       * Converts rgb tokens to hex CSS color.
+       * @param {number} r The red channel value.
+       * @param {number} g The green channel value.
+       * @param {number} b The blue channel value.
+       * @return {string}
+       */
+      rgbToHex: function(r, g, b) {
+        r = Number(r);
+        g = Number(g);
+        b = Number(b);
+        if (r != (r & 255) || g != (g & 255) || b != (b & 255)) {
+          throw Error(
+              '"(' + r + ',' + g + ',' + b + '") is not a valid RGB color');
+        }
+        return '#' + 
+            prependZeroIfNecessaryHelper(r.toString(16)) +
+            prependZeroIfNecessaryHelper(g.toString(16)) +
+            prependZeroIfNecessaryHelper(b.toString(16));
+      }
+    });
+  })();
+  </script>
+</dom-module>

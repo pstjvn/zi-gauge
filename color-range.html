@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./color-adapter.html">
+
+
+<dom-module id="color-range">
+  <template>
+    <style>:host { display: none; }</style>
+    <color-adapter id="adapter"></color-adapter>
+  </template>
+  <script>
+    Polymer({
+      is: 'color-range',
+      properties: {
+        /** The color to start the range from. */
+        startColor: String,
+        /** The color to end the range to. */
+        endColor: String,
+        _start: Array,
+        _end: Array,
+        _lastColor: Array,
+        _distance: Array,
+        _revert: Array,
+      },
+      observers: [ '_init(startColor, endColor)' ],
+
+
+      /** Initializes our internal values. */
+      _init: function(start, end) {
+        if (start == undefined || end == undefined) {
+          this.log('Both colors must be initialized');
+          return;
+        }
+        this._start = this.$.adapter.hexToRgb(start);
+        this._end = this.$.adapter.hexToRgb(end);
+        this._start.forEach(function(channel, i) {
+          if (this._start[i] < this._end[i]) {
+            this._distance[i] = this._end[i] - this._start[i];
+            this._revert[i] = 1;
+          } else if (this._start[i] > this._end[i]) {
+            this._distance[i] = this._start[i] - this._end[i];
+            this._revert[i] = -1;
+          } else {
+            this._distance[i] = 0;
+            this._revert[i] = 0;
+          }
+        }, this);        
+      },
+
+
+      /**
+       * Allows the consumers to get color value for the position in the range.
+       *
+       * @param {number} fraction A number between 0 and 1.
+       * @return {string} Hex representation of the color value.
+       */
+      getColorFromFraction: function(fraction) {
+        for (var i = 0; i < 3; i++) {
+          if (this._revert[i] == 0) {
+            this._lastColor[i] = this._start[i];
+          } else if (this._revert[i] == 1) {
+            this._lastColor[i] = +(
+                  (this._distance[i] * fraction) + this._start[i]).toFixed();
+          } else if (this._revert[i] == -1) {
+            this._lastColor[i] = +(
+                this._start[i] - (this._distance[i] * fraction)).toFixed();
+          }
+        }
+        return this.$.adapter.rgbArrayToHex(this._lastColor);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,23 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./color-range.html">
+
+
+<dom-module id="color-arc">
+  <template>
+    <style>:host { display: none; }</style>
+    <color-range id="range"></color-range>
+  </template>
+  <script>
+    Polymer({
+      is: 'color-arc',
+      createArc: function(rect, start, end) {
+        this.$.range.startColor = start;
+        this.$.range.endColor = end;
+        this.setSize(rect);
+        this.clear();
+
+        
+      }
+    });
+  </script>
+</dom-module>

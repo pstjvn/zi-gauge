@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="zi-gauge">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+  </template>
+
+  <script>
+    /**
+     * `zi-gauge`
+     * Zi-app specific gauge element
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ZiGauge extends Polymer.Element {
+      static get is() { return 'zi-gauge'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'zi-gauge'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(ZiGauge.is, ZiGauge);
+  </script>
+</dom-module>
