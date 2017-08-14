@@ -26,6 +26,11 @@
 
       /** Initializes our internal values. */
       _init: function(start, end) {
+        if (!this._lastColor) {
+          this._lastColor = new Array(3);
+          this._distance = new Array(3);
+          this._revert = new Array(3);
+        }
         if (start == undefined || end == undefined) {
           this.log('Both colors must be initialized');
           return;

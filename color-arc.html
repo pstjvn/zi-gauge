@@ -4,20 +4,145 @@
 
 <dom-module id="color-arc">
   <template>
-    <style>:host { display: none; }</style>
-    <color-range id="range"></color-range>
+    <style>
+      :host { 
+        display: block; 
+      }
+    </style>
+    <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
+    <canvas id="canvas" width="[[width]]" height="[[height]]"></canvas>
   </template>
   <script>
-    Polymer({
-      is: 'color-arc',
-      createArc: function(rect, start, end) {
-        this.$.range.startColor = start;
-        this.$.range.endColor = end;
-        this.setSize(rect);
-        this.clear();
+    (function() {
+      var constants = {
+        ZeroDegree: Math.PI + (Math.PI / 2),
+        CircleCircumference: Math.PI * 2,
+        OneDegree: Math.PI / 180,
+        TwoDegrees: (Math.PI / 180) * 2
+      };
+      var defaultRadius = ((100 - 27) / 100);
+      Polymer({
+        is: 'color-arc',
+        properties: {
+          /**
+           * Allows to set the width/height of the canvas area externally.
+           */
+          width: {
+            type: Number
+          },
+          /** Allows to set the width/height of the canvas area externally. */
+          height: {
+            type: Number
+          },
 
-        
-      }
-    });
+          startColor: String,
+          endColor: String,
+          /**
+           * The ratio the drawing implies to match the SVG to be used in original
+           * design requiring this class.
+           *
+           * That is to read: in an image with height 200 pixels. the radius of
+           * the circle to be drawing should be the radius of the circle that 
+           * matches the square with height 200 minus 27.
+           *
+           * This means that for a square with height 100, the radius of the drawn
+           * circle should be 100 / 2 * ((100-27) / 100) => 36.5 pixels;
+           */
+          radiusRatio: {
+            type: Number,
+            value: defaultRadius
+          },
+          /**
+           * The offset at which to start the arc. We consider 12 o'clock to be
+           * 0 degree declination.
+           */
+          declination: {
+            type: Number,
+            value: 29.0
+          },
+          /** Helper for referencing the 2d context. */
+          _context: Object
+        },
+
+        observers: [
+          '_recalculate(startColor, endColor, declination, radiusRatio)'
+        ],
+
+        /** @override */
+        attached: function() {
+          this.setSize(this.getBoundingClientRect());
+          this._recalculate();
+        },
+
+        _recalculate: function(start, end, dec, r) {
+          this.createArc();
+        },
+
+        createArc: function() {
+          if (!this._context) this._context = this.$.canvas.getContext('2d');
+          this.clear();
+          var side = (this.width >= this.height) ? this.height : this.width;
+          var radius = side / 2 * this.radiusRatio;
+          var startFromDegree = this._getDegreeDeclination();
+          var degreesToDraw = (360 - (startFromDegree * 2));
+          var x = this.width / 2;
+          var y = this.height / 2;
+
+          console.log(radius);
+
+          // TODO: work woth designer to figure out if we need to be able to configure this.
+          this._context.lineWidth = 10;
+
+          for (var i = 0; i < degreesToDraw; i++) {
+            var rad = (i + startFromDegree) * constants.OneDegree + constants.ZeroDegree;
+            if (rad > constants.CircleCircumference) rad = rad - constants.CircleCircumference;
+            var colorValue = this.$.range.getColorFromFraction(i / degreesToDraw);
+            this._context.beginPath();
+            console.log(colorValue);
+            this._context.strokeStyle = colorValue;
+            // TODO: Measure this - it might be a performance regression because of the comparison.
+            // Draw the arcs on top of each other to avoid gaps
+            // For the last stroke we need only once degree!
+            if (i+2 == degreesToDraw) {
+              this._context.arc(x, y, radius, rad, rad + constants.OneDegree, false);  
+            } else {
+              this._context.arc(x, y, radius, rad, rad + constants.TwoDegrees, false);
+            }
+            this._context.stroke();
+          }
+
+          
+        },
+
+
+        /**
+         * Helper function to guard for invalid declination values.
+         * @return {number}
+         * @private 
+         */
+        _getDegreeDeclination: function() {
+          if (this.declination < 0 || this.declination > 179) {
+            throw new Error('Declination lower than 0 or higher than 178 does not make sense.');
+          }
+          return this.declination;
+        },
+
+
+        /** 
+         * Allows to set the size of the canvas.
+         * @param {{width: number, height: number}} rect
+         */
+        setSize: function(rect) {
+          this.width = rect.width;
+          this.height = rect.height;
+        },
+
+
+        /** Clears the whole canvas area. */
+        clear: function() {
+          this._context.clearRect(0, 0, this.width, this.height);
+        }
+      });
+    })();
   </script>
 </dom-module>
