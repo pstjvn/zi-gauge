@@ -34,9 +34,16 @@
           height: {
             type: Number
           },
-
-          startColor: String,
-          endColor: String,
+          /** The color to start from - in HEX format. */
+          startColor: {
+            type: String,
+            value: '#000000'
+          },
+          /** The color to end with. in HEX format */
+          endColor: {
+            type: String,
+            value: '#ffffff'
+          },
           /**
            * The ratio the drawing implies to match the SVG to be used in original
            * design requiring this class.
@@ -78,28 +85,28 @@
           this.createArc();
         },
 
+        /** Protected method - forces the creation of the arc. */
         createArc: function() {
+          // Can be called from the observer at init - postpone till attached.
+          if (!this.width || !this.height) return;
+          // First time the context will not be existing, get one.
           if (!this._context) this._context = this.$.canvas.getContext('2d');
           this.clear();
+          // Use the shorter side to paint.
           var side = (this.width >= this.height) ? this.height : this.width;
           var radius = side / 2 * this.radiusRatio;
           var startFromDegree = this._getDegreeDeclination();
           var degreesToDraw = (360 - (startFromDegree * 2));
           var x = this.width / 2;
           var y = this.height / 2;
-
-          console.log(radius);
-
           // TODO: work woth designer to figure out if we need to be able to configure this.
           this._context.lineWidth = 10;
 
           for (var i = 0; i < degreesToDraw; i++) {
             var rad = (i + startFromDegree) * constants.OneDegree + constants.ZeroDegree;
             if (rad > constants.CircleCircumference) rad = rad - constants.CircleCircumference;
-            var colorValue = this.$.range.getColorFromFraction(i / degreesToDraw);
             this._context.beginPath();
-            console.log(colorValue);
-            this._context.strokeStyle = colorValue;
+            this._context.strokeStyle = this.$.range.getColorFromFraction(i / degreesToDraw);
             // TODO: Measure this - it might be a performance regression because of the comparison.
             // Draw the arcs on top of each other to avoid gaps
             // For the last stroke we need only once degree!
@@ -109,9 +116,7 @@
               this._context.arc(x, y, radius, rad, rad + constants.TwoDegrees, false);
             }
             this._context.stroke();
-          }
-
-          
+          }          
         },
 
 
