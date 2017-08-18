@@ -21,6 +21,7 @@
         TwoDegrees: (Math.PI / 180) * 2
       };
       var defaultRadius = ((100 - 27) / 100);
+      var defaultWidth = (10 / 200);
       Polymer({
         is: 'color-arc',
         properties: {
@@ -59,6 +60,14 @@
             type: Number,
             value: defaultRadius
           },
+          /** 
+           * The width of the line to draw the arc with.
+           * The default value is calculated as ratio from the original drawing.
+           */
+          lineWidth: {
+            type: Number,
+            value: defaultWidth
+          },
           /**
            * The offset at which to start the arc. We consider 12 o'clock to be
            * 0 degree declination.
@@ -85,6 +94,7 @@
           this.createArc();
         },
 
+
         /** Protected method - forces the creation of the arc. */
         createArc: function() {
           // Can be called from the observer at init - postpone till attached.
@@ -99,8 +109,8 @@
           var degreesToDraw = (360 - (startFromDegree * 2));
           var x = this.width / 2;
           var y = this.height / 2;
-          // TODO: work woth designer to figure out if we need to be able to configure this.
-          this._context.lineWidth = 10;
+          
+          this._context.lineWidth = side * this.lineWidth;
 
           for (var i = 0; i < degreesToDraw; i++) {
             var rad = (i + startFromDegree) * constants.OneDegree + constants.ZeroDegree;

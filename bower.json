@@ -3,7 +3,9 @@
   "description": "Zi-app specific gauge element",
   "main": "zi-gauge.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0"
+    "polymer": "Polymer/polymer#^2.0.0",
+    "text-to-html": "https://github.com/pstjvn/text-to-html.git",
+    "iron-flex-layout": "^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
