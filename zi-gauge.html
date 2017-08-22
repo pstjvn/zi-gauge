@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../zi-animation-factory/zi-animation-factory.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="./color-arc.html">
 
@@ -7,16 +9,21 @@
   <template>
     <style>
       :host {
-        display: block;
+        display: inline-block;
+        width: 200px;
+        height: 200px;
         position: relative;
+        background-repeat: no-repeat;
+        background-size: cover;
       }
+
       color-arc {
         display: block;
         width: 100%;
         height: 100%;
       }
 
-      g.thermometer, g.bulb, g.vent {
+      g.thermometer, g.bulb, g.vent, color-arc {
         display: none;
       }
 
@@ -40,8 +47,9 @@
         @apply --layout-center-justified;
       }
     </style>
+    <zi-animation-factory id="animation"></zi-animation-factory>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
-    <color-arc start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
+    <color-arc id="arc" on-arcready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
     <div class="text">
       <div>
         <div class="value">
@@ -85,6 +93,11 @@
           {param declination: $declination /}
         {/call}
       {/foreach} -->
+    </svg>
+    <svg version="1.1" viewBox="0 0 200 200"
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        style="enable-background:new 0 0 200 200;" xml:space="preserve"
+        on-track="_track">
       <g class="knob">
         <g style="opacity:0.3;">
           <circle fill="#999999" cx="100" cy="27" r="10.7"/>
@@ -97,12 +110,49 @@
     </svg>
   </template>
   <script>
+    var degrees = 360;
+    var maxTime = 250;
+    // Time for one degree offset.
+    var time41degree = degrees/maxTime;
     Polymer({
       is: 'zi-gauge',
+      behaviors: [Polymer.Gestures],
       properties: {
+        /**
+         * Internal state object. We use it to store the target value and
+         * control the animations with it. Example:
+         * The current value range is 0-100
+         * The current value is 10
+         * User clicked on UI and next value should be 55
+         * We set the deisred value to 55 and start animation iteration with
+         * continuous animation TS == Date.now and control the animation this
+         * way so for 250ms / all degrees * change degrees we need to go to
+         * value 55.
+         */
+        _state: {
+          type: Object,
+          value: function() {
+            return {
+              // required by the API
+              timestamp: 0,
+              //
+              desiredValue: 0,
+              currentvalue: 0,
+              //
+              animationStart: 0
+
+            };
+          }
+        },
+        /** Reference to the internal animation that controls the UI changes. */
+        _animation: {type: Object },
         /** The symbol to use for post value symbol */
-        _iconColor: { 
+        _iconColor: {
           type: String
+        },
+        _userInteraction: {
+          type: Boolean,
+          value: false
         },
         /** The icon to use if any. */
         icon: { type: String },
@@ -122,13 +172,53 @@
         endColor: { type: String, value: '#84a0e8' }
       },
 
+      ready: function() {
+        this._animation = this.$.animation.create(
+          this._measure.bind(this), this._mutate.bind(this), this._state);
+        this._animation();
+      },
+
+      _onArcReady: function(e) {
+        e.stopPropagation();
+        this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
+      },
+
+      _onDown: function(e) {
+        this._userInteraction = true;
+        e.preventDefault();
+      },
+
+      _onTrack: function() {
+
+      },
+
+      _onUp: function() {
+        this._userInteraction = false;
+      },
+
       _displayValue: function(val) {
         console.log('aa?', val);
       },
 
+      _measure: function(state) {
+      },
+
+      _mutate: function(state) {
+        // if the animation start is reset to 0 then we reflect the current
+        // value back to the view immediately.
+        if (state.animationStart == 0) {
+          this._iconColor = this.$.range.getColorFromFraction(this.value / this.maximum);
+        } else {
+
+        }
+      },
+
+      /**
+       * Handles the case when the value is changed...
+       */
       _onValueChanged: function(newValue) {
         if (this.minimum <= newValue <= this.maximum) {
-          this._iconColor = this.$.range.getColorFromFraction(newValue / this.maximum);
+          if (this._animation) this._animation();
         } else {
           throw new Error('Value is out of range.');
         }

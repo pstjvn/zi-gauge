@@ -5,8 +5,8 @@
 <dom-module id="color-arc">
   <template>
     <style>
-      :host { 
-        display: block; 
+      :host {
+        display: block;
       }
     </style>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
@@ -50,7 +50,7 @@
            * design requiring this class.
            *
            * That is to read: in an image with height 200 pixels. the radius of
-           * the circle to be drawing should be the radius of the circle that 
+           * the circle to be drawing should be the radius of the circle that
            * matches the square with height 200 minus 27.
            *
            * This means that for a square with height 100, the radius of the drawn
@@ -60,7 +60,7 @@
             type: Number,
             value: defaultRadius
           },
-          /** 
+          /**
            * The width of the line to draw the arc with.
            * The default value is calculated as ratio from the original drawing.
            */
@@ -94,6 +94,17 @@
           this.createArc();
         },
 
+        /**
+         * Allows access to the underlying image data.
+         *
+         * This can be useful in scenarios where we know that the image will
+         * not change and we want to scale it with CSS and not expose the
+         * canvas itself.
+         */
+        getArc: function() {
+          return this.$.canvas.toDataURL();
+        },
+
 
         /** Protected method - forces the creation of the arc. */
         createArc: function() {
@@ -109,7 +120,7 @@
           var degreesToDraw = (360 - (startFromDegree * 2));
           var x = this.width / 2;
           var y = this.height / 2;
-          
+
           this._context.lineWidth = side * this.lineWidth;
 
           for (var i = 0; i < degreesToDraw; i++) {
@@ -121,19 +132,21 @@
             // Draw the arcs on top of each other to avoid gaps
             // For the last stroke we need only once degree!
             if (i+2 == degreesToDraw) {
-              this._context.arc(x, y, radius, rad, rad + constants.OneDegree, false);  
+              this._context.arc(x, y, radius, rad, rad + constants.OneDegree, false);
             } else {
               this._context.arc(x, y, radius, rad, rad + constants.TwoDegrees, false);
             }
             this._context.stroke();
-          }          
+          }
+          this.fire('arcready');
+          console.log(this.parentNode);
         },
 
 
         /**
          * Helper function to guard for invalid declination values.
          * @return {number}
-         * @private 
+         * @private
          */
         _getDegreeDeclination: function() {
           if (this.declination < 0 || this.declination > 179) {
@@ -143,13 +156,13 @@
         },
 
 
-        /** 
+        /**
          * Allows to set the size of the canvas.
          * @param {{width: number, height: number}} rect
          */
         setSize: function(rect) {
-          this.width = rect.width;
-          this.height = rect.height;
+          this.width = rect.width || 200;
+          this.height = rect.height || 200;
         },
 
 
