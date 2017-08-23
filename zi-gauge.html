@@ -49,7 +49,7 @@
     </style>
     <zi-animation-factory id="animation"></zi-animation-factory>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
-    <color-arc id="arc" on-arcready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
+    <!-- <color-arc id="arc" on-arcready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc> -->
     <div class="text">
       <div>
         <div class="value">
@@ -114,6 +114,7 @@
     var maxTime = 250;
     // Time for one degree offset.
     var time41degree = degrees/maxTime;
+    var colorArc = document.createElement('color-arc');
     Polymer({
       is: 'zi-gauge',
       behaviors: [Polymer.Gestures],
