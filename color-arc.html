@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../zi-animation-factory/zi-animation-factory.html">
 <link rel="import" href="./color-range.html">
 
 <!--
@@ -28,6 +29,7 @@
         display: block;
       }
     </style>
+    <zi-animation-factory id="animation"></zi-animation-factory>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
     <canvas id="canvas" width="[[width]]" height="[[height]]"></canvas>
   </template>
@@ -96,7 +98,8 @@
             value: 29.0
           },
           /** Helper for referencing the 2d context. */
-          _context: Object
+          _context: Object,
+          _animation: Object
         },
 
         observers: [
@@ -104,17 +107,41 @@
         ],
 
         /** @override */
+        ready: function() {
+          this._animation = this.$.animation.create(
+              this.measure.bind(this),
+              this.mutate.bind(this));
+        },
+
+        /**
+         * Provides the measuring state of the animation.
+         */
+        measure: function(state) {
+          this.setSize(this.getBoundingClientRect());
+        },
+
+        /**
+         * Provides the mutation step in the drawing animation. 
+         * If the drawing was canceled, nothing will happen.
+         */
+        mutate: function(state) {
+          this.createArc();
+          this.fire('arc-ready');
+        },
+
+        /** @override */
         attached: function() {
           this.setSize(this.getBoundingClientRect());
           this._recalculate();
         },
 
-        _recalculate: function(start, end, dec, r) {
-          this.createArc();
-        },
 
-        cancelDrawing: function() {
-
+        /**
+         * Exports a public API to allow developer to stop the normal processing
+         * of the animation drawing. 
+         */
+        cancel: function() {
+          this._state.cancel = true;
         },
 
         /**
@@ -161,10 +188,7 @@
             }
             this._context.stroke();
           }
-          this.fire('arcready');
-          console.log(this.parentNode);
         },
-
 
         /**
          * Helper function to guard for invalid declination values.
@@ -178,7 +202,6 @@
           return this.declination;
         },
 
-
         /**
          * Allows to set the size of the canvas.
          * @param {{width: number, height: number}} rect
@@ -188,10 +211,14 @@
           this.height = rect.height || 200;
         },
 
-
         /** Clears the whole canvas area. */
         clear: function() {
           this._context.clearRect(0, 0, this.width, this.height);
+        },
+
+        /** Triggered when one of the inputs changes. */
+        _recalculate: function(start, end, dec, r) {
+          if (this._animation) this._animation();
         }
       });
     })();
