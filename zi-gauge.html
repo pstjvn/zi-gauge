@@ -18,9 +18,7 @@
       }
 
       color-arc {
-        display: block;
-        width: 100%;
-        height: 100%;
+        display: none;
       }
 
       g.thermometer, g.bulb, g.vent, color-arc {
@@ -49,7 +47,7 @@
     </style>
     <zi-animation-factory id="animation"></zi-animation-factory>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
-    <color-arc id="arc" on-arcready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
+    <color-arc id="arc" on-arc-ready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
     <div class="text">
       <div>
         <div class="value">
@@ -139,7 +137,10 @@
               desiredValue: 0,
               currentvalue: 0,
               //
-              animationStart: 0
+              animationStart: 0,
+              // If set to true, on next animation iteration update the back-
+              // ground image of the element from the color arc element.
+              updateBackground: false
 
             };
           }
@@ -174,13 +175,20 @@
 
       ready: function() {
         this._animation = this.$.animation.create(
-          this._measure.bind(this), this._mutate.bind(this), this._state);
+          this._measure.bind(this), 
+          this._mutate.bind(this), 
+          this._state);
         this._animation();
       },
 
-      _onArcReady: function(e) {
-        e.stopPropagation();
-        this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
+      /** 
+       * Handles signalling from arc when drawing is ready. 
+       * We pospone the drawing to the next frame, so from changing the 
+       * colors it would take at least 2 RAF to see the final result. 
+       */
+      _onArcReady: function() {
+        this._state.updateBackground = true;
+        this._animation();
       },
 
       _onDown: function(e) {
@@ -197,13 +205,17 @@
       },
 
       _displayValue: function(val) {
-        console.log('aa?', val);
+        // console.log('aa?', val);
       },
 
       _measure: function(state) {
       },
 
       _mutate: function(state) {
+        if (state.updateBackground) {
+          this.updateBackground = false;
+          this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
+        }
         // if the animation start is reset to 0 then we reflect the current
         // value back to the view immediately.
         if (state.animationStart == 0) {
