@@ -9,7 +9,7 @@
   <template>
     <style>
       :host {
-        display: inline-block;
+        display: block;
         width: 200px;
         height: 200px;
         position: relative;
@@ -44,19 +44,27 @@
         @apply --layout-center;
         @apply --layout-center-justified;
       }
+
+      .knob {
+        transform-origin: 50% 50%;
+        transition: transform 100ms;
+      }
+
+      :host(.active) .knob {
+        transform: scale(2);
+      }
     </style>
     <zi-animation-factory id="animation"></zi-animation-factory>
     <color-range id="range" start-color="[[startColor]]" end-color="[[endColor]]"></color-range>
-    <color-arc id="arc" on-arc-ready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
+    <color-arc id="arc" declination="[[declination]]" on-arc-ready="_onArcReady" start-color="[[startColor]]" end-color="[[endColor]]"></color-arc>
     <div class="text">
       <div>
         <div class="value">
-          <span data-ng-model="value | precision({$precision}) | fixed({$precision})">[[_displayValue(value)]]</span>
+          <span>[[_displayValue(_visualValue)]]</span>
           <slot name="symbol"></slot>
-          <!-- <span data-ng-model="symbol" data-ng-html><html-orint></span> -->
         </div>
-        <div class="info" data-ng-model="info">
-          <slot name="label"></slot>
+        <div class="info">
+          <slot></slot>
         </div>
       </div>
     </div>
@@ -93,9 +101,12 @@
       {/foreach} -->
     </svg>
     <svg version="1.1" viewBox="0 0 200 200"
+        id="knob"
         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         style="enable-background:new 0 0 200 200;" xml:space="preserve"
-        on-track="_track">
+        on-down="_onDown"
+        on-up="_onUp"
+        on-track="_onTrack">
       <g class="knob">
         <g style="opacity:0.3;">
           <circle fill="#999999" cx="100" cy="27" r="10.7"/>
@@ -108,133 +119,411 @@
     </svg>
   </template>
   <script>
-    var degrees = 360;
-    var maxTime = 250;
-    // Time for one degree offset.
-    var time41degree = degrees/maxTime;
-    Polymer({
-      is: 'zi-gauge',
-      behaviors: [Polymer.Gestures],
-      properties: {
-        /**
-         * Internal state object. We use it to store the target value and
-         * control the animations with it. Example:
-         * The current value range is 0-100
-         * The current value is 10
-         * User clicked on UI and next value should be 55
-         * We set the deisred value to 55 and start animation iteration with
-         * continuous animation TS == Date.now and control the animation this
-         * way so for 250ms / all degrees * change degrees we need to go to
-         * value 55.
-         */
-        _state: {
-          type: Object,
-          value: function() {
-            return {
-              // required by the API
-              timestamp: 0,
-              //
-              desiredValue: 0,
-              currentvalue: 0,
-              //
-              animationStart: 0,
-              // If set to true, on next animation iteration update the back-
-              // ground image of the element from the color arc element.
-              updateBackground: false
-
-            };
-          }
-        },
-        /** Reference to the internal animation that controls the UI changes. */
-        _animation: {type: Object },
-        /** The symbol to use for post value symbol */
-        _iconColor: {
-          type: String
-        },
-        _userInteraction: {
-          type: Boolean,
-          value: false
-        },
-        /** The icon to use if any. */
-        icon: { type: String },
-        /** The value of the dial. */
-        value: {
-          type: Number,
-          observer: '_onValueChanged',
-          notify: true
-        },
-        /** The minimum value allowed in the slider. */
-        minimum: {type: Number, value: 0 },
-        /** The maximum value allowed in the slider. */
-        maximum: {type: Number, value: 100 },
-        /** The start color to use */
-        startColor: { type: String, value: '#f29093' },
-        /** The end color to use */
-        endColor: { type: String, value: '#84a0e8' }
-      },
-
-      ready: function() {
-        this._animation = this.$.animation.create(
-          this._measure.bind(this), 
-          this._mutate.bind(this), 
-          this._state);
-        this._animation();
-      },
-
-      /** 
-       * Handles signalling from arc when drawing is ready. 
-       * We pospone the drawing to the next frame, so from changing the 
-       * colors it would take at least 2 RAF to see the final result. 
-       */
-      _onArcReady: function() {
-        this._state.updateBackground = true;
-        this._animation();
-      },
-
-      _onDown: function(e) {
-        this._userInteraction = true;
-        e.preventDefault();
-      },
-
-      _onTrack: function() {
-
-      },
-
-      _onUp: function() {
-        this._userInteraction = false;
-      },
-
-      _displayValue: function(val) {
-        // console.log('aa?', val);
-      },
-
-      _measure: function(state) {
-      },
-
-      _mutate: function(state) {
-        if (state.updateBackground) {
-          this.updateBackground = false;
-          this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
-        }
-        // if the animation start is reset to 0 then we reflect the current
-        // value back to the view immediately.
-        if (state.animationStart == 0) {
-          this._iconColor = this.$.range.getColorFromFraction(this.value / this.maximum);
-        } else {
-
-        }
-      },
+    (function() {
+      var maxDegrees = 360; // max degree we can change to
+      var maxTime = 850; // max time if we want to change max degrees
+      var degreeForOneMillisecond = maxDegrees / maxTime;
+      var degreesPerFrame = degreeForOneMillisecond * 16;
 
       /**
-       * Handles the case when the value is changed...
+       * Provides the quadrants to separate the space in positional system.
+       *
+       * @enum {number}
+       * @protected
        */
-      _onValueChanged: function(newValue) {
-        if (this.minimum <= newValue <= this.maximum) {
-          if (this._animation) this._animation();
+      var Quadrant = {
+        I: 1,
+        II: 2,
+        III: 3,
+        IV: 4
+      };
+
+      /**
+       * Caches our rotation angles in the correct format.
+       *
+       * We cache transformations for points from quadrants II, III and IV to
+       * quadrant I, so we can calcualte the rotation angle with only one point.
+       *
+       * @enum {number}
+       * @protected
+       */
+      var Cache = {
+        sin90: Math.sin(270 * Math.PI / 180),
+        sin180: Math.sin(180 * Math.PI / 180),
+        sin270: Math.sin(90 * Math.PI / 180),
+        cos90: Math.cos(270 * Math.PI / 180),
+        cos180: Math.cos(180 * Math.PI / 180),
+        cos270: Math.cos(90 * Math.PI / 180)
+      };
+
+      /**
+       * Determine in which Q is our point - the point should be centextualized
+       * to the center of the rect.
+       * @param {{x: number, y: number}} point
+       * @return {number}
+       */
+      function calculateQuadrant(point) {
+        if (point.x > 0) {
+          if (point.y > 0) {
+            return Quadrant.I;
+          } else {
+            return Quadrant.IV;
+          }
         } else {
-          throw new Error('Value is out of range.');
+          if (point.y > 0) {
+            return Quadrant.II;
+          } else {
+            return Quadrant.III;
+          }
         }
       }
-    });
+
+      /**
+       * Given a point, rotate it so that it would appear rotated to quadrant I and
+       * calculate the angular offset for it starting from 0 being the 12-o'clock
+       * position.
+       *
+       * For example if your point has PI - 5deg rotation (quadrant 3), the returned
+       * angular rotation would be 265 degrees from 12o'clock position.
+       *
+       * @param {goog.math.Coordinate} point
+       * @return {number}
+       */
+      function determineCSSRotationAngle(point) {
+        var quadrant = calculateQuadrant(point);
+        var cx = point.x;
+        var cy = point.y;
+        var add = 0;
+
+        switch (quadrant) {
+          case Quadrant.II:
+            add = 270;
+            cx = ((point.x * Cache.cos90) - (point.y * Cache.sin90));
+            cy = ((point.x * Cache.sin90) + (point.y * Cache.cos90));
+            break;
+          case Quadrant.III:
+            add = 180;
+            cx = ((point.x * Cache.cos180) - (point.y * Cache.sin180));
+            cy = ((point.x * Cache.sin180) + (point.y * Cache.cos180));
+            break;
+          case Quadrant.IV:
+            add = 90;
+            cx = ((point.x * Cache.cos270) - (point.y * Cache.sin270));
+            cy = ((point.x * Cache.sin270) + (point.y * Cache.cos270));
+            break;
+        }
+
+        var rotation = Math.atan((distanceOfSegenmentByXYValues(
+              0, cy, cx, cy)) / (distanceOfSegenmentByXYValues(0, cy, 0, 0)));
+
+        return (rotation * (180 / Math.PI)) + add;
+      }
+
+      /**
+       * Calculates the distance between two points.
+       *
+       * This variant expects separate x/y values for each point. If you already have
+       * the points as array or object use the corresponding methods.
+       *
+       * @param {number} x1 The X value of the first point.
+       * @param {number} y1 The Y value of the first point.
+       * @param {number} x2 The X value of the second point.
+       * @param {number} y2 The Y value of the second point.
+       * @return {number} The distance between the two points.
+       */
+      function distanceOfSegenmentByXYValues(x1, y1, x2, y2) {
+        return Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+      }
+
+      /**
+       * Given a value, a range, and allowed tolerance for the ends of the range
+       * adjusts the value to be in the end points of the range if the offset from
+       * the the ends is lower than the tolerance.
+       *
+       * @param {number} value
+       * @param {number} min
+       * @param {number} max
+       * @return {number}
+       */
+      function capValue(value, min, max) {
+        if (value > max) {
+          value = max;
+        }
+        if (value < min) {
+          value = min;
+        }
+        return value;
+      }
+
+      function toPrecision(value, opt_points) {
+        var points = 0;
+        if (typeof opt_points == 'number') {
+          points = parseInt(opt_points, 10);
+          if (isNaN(points)) {
+            points = 0;
+          }
+        }
+        var v = parseFloat(value);
+        if (isNaN(v)) return value;
+        return (Math.round(v * Math.pow(10, points)) / Math.pow(10, points));
+      }
+
+      function repeatString(string, length) {
+        return new Array(length + 1).join(string);
+      }
+
+      function padNumber(num, length, opt_precision) {
+        var s = opt_precision != undefined ? num.toFixed(opt_precision) : String(num);
+        var index = s.indexOf('.');
+        if (index == -1) {
+          index = s.length;
+        }
+        return repeatString('0', Math.max(0, length - index)) + s;
+      }
+
+      function toFixed(v, digits) {
+        if (isNaN(v)) return v;
+        var d = parseInt(digits, 10);
+        if (isNaN(digits)) return v;
+        return padNumber(v, 0, d);
+      }
+
+
+      Polymer({
+        is: 'zi-gauge',
+        behaviors: [Polymer.Gestures],
+        properties: {
+          /**
+           * Internal state object. We use it to store the target value and
+           * control the animations with it. Example:
+           * The current value range is 0-100
+           * The current value is 10
+           * User clicked on UI and next value should be 55
+           * We set the deisred value to 55 and start animation iteration with
+           * continuous animation TS == Date.now and control the animation this
+           * way so for 250ms / all degrees * change degrees we need to go to
+           * value 55.
+           */
+          _state: {
+            type: Object,
+            value: function() {
+              return {
+                rect: null,
+                x: null,
+                y: null,
+                desiredDegree: 0,
+                currentDegree: 0,
+                initial: true,
+                // If set to true, on next animation iteration update the back-
+                // ground image of the element from the color arc element.
+                updateBackground: false,
+                visibleValue: 0
+              };
+            }
+          },
+          /** Reference to the internal animation that controls the UI changes. */
+          _animation: {type: Object },
+          /** The symbol to use for post value symbol */
+          _iconColor: {
+            type: String
+          },
+          /**
+           * Track if the user is currently interacting with the UI. If this is
+           * the case and a new value arrives externally we need ignore it and
+           * instead reset it when the user is done dragging.
+           */
+          _userInteraction: {
+            type: Boolean,
+            value: false
+          },
+          _attached: {
+            type: Boolean,
+            value: false
+          },
+          /** Helper for data binding - represent the current value durring animations */
+          _visualValue: {
+            type: Number
+          },
+          /** The icon to use if any. */
+          icon: { type: String },
+          /** The value of the dial. */
+          value: {
+            type: Number,
+            observer: '_onValueChanged',
+            notify: true
+          },
+          /** The minimum value allowed in the slider. */
+          minimum: {type: Number, value: 0 },
+          /** The maximum value allowed in the slider. */
+          maximum: {type: Number, value: 100 },
+          /** The start color to use */
+          startColor: { type: String, value: '#f29093' },
+          /** The end color to use */
+          endColor: { type: String, value: '#84a0e8' },
+          /** The declination from 12 o'clock in degrees. This is not configurable */
+          declination: {type: Number, value: 29.0, readOnly: true },
+          /** The precision to use to display the value. */
+          precision: { type: Number, value: 0 },
+          /** If the control is currently user interactable */
+          disabled: { type: Boolean }
+        },
+
+        /** @override */
+        ready: function() {
+          this._animation = this.$.animation.create(
+            null,
+            this._mutate.bind(this),
+            this._state);
+        },
+
+        /** @override */
+        attached: function() {
+          this._attached = true;
+          this._state.initial = true;
+          this._animation();
+
+        },
+
+        /** @override */
+        detached: function() {
+          this._attached = false;
+          this._state.x = null;
+          this._state.y = null;
+        },
+
+        /**
+         * Checks if the value we are about to se is within the limits allowed.
+         * @return {boolean}
+         */
+        _checkValueWithinLimits: function() {
+          if (this.minimum >= this.maximum) {
+            throw new Error('Minimum should be lower than maximum');
+          }
+          if (typeof this.value != 'number') this.value = this.minimum;
+          if (this.minimum < this.value < this.maximum) {
+            return true;
+          } else {
+            throw new Error('Value must be within range');
+          }
+        },
+
+        /**
+         * Observes the current value and prepares it to a string for HTML
+         * rendering.
+         * @param {number} val
+         * @return {string}
+         */
+        _displayValue: function(val) {
+          return toFixed(toPrecision(val, this.precision), this.precision);
+        },
+
+
+        /**
+         * Handles signalling from arc when drawing is ready.
+         * We pospone the drawing to the next frame, so from changing the
+         * colors it would take at least 2 RAF to see the final result.
+         */
+        _onArcReady: function() {
+          this._state.updateBackground = true;
+          this._animation();
+        },
+
+        _onDown: function(e) {
+          e.preventDefault();
+          this._userInteraction = true;
+          this._state.rect = this.getBoundingClientRect();
+          this.classList.add('active');
+          this._recordInteraction(e);
+          this._animation();
+        },
+
+        _onTrack: function(e) {
+          if (this._userInteraction) {
+            this._recordInteraction(e);
+            this._animation();
+          }
+        },
+
+        /**
+         * Given a gesture event records the position of the event in an
+         * internal coordinate system to make later calculations easier.
+         * @param {!CustomEvent} e
+         */
+        _recordInteraction: function(e) {
+          this._state.x = (e.detail.x - this._state.rect.left) - (this._state.rect.width / 2);
+          this._state.y = ((e.detail.y - this._state.rect.top) * -1) + (this._state.rect.height / 2);
+        },
+
+        _onUp: function() {
+          this._userInteraction = false;
+          this.classList.remove('active');
+        },
+
+        /** This is where the magic happens, everything synced with RAF */
+        _mutate: function(state) {
+          if (this._attached) {
+            // If this is initializing painting, we need to calculate things and
+            // set everything immediately.
+            if (state.initial) {
+              state.initial = false;
+              if (this._checkValueWithinLimits()) {
+                // Reset the drag state to avoid surplus calculations.
+                this._state.x = null;
+                this._state.y = null;
+                // Calculate the fraction the current value represents in the range.
+                var frac = (this.value - this.minimum) / (this.maximum - this.minimum);
+                // caluclate the degrees from it fraction
+                var deg = ((360 - this.declination - this.declination) * (1 - frac)) + this.declination;
+                state.currentDegree = deg;
+                state.desiredDegree = deg;
+                state.visibleValue = this.value;
+              }
+            }
+            // If we have recorded a movement, update according to it as well.
+            if (state.x != null && state.y != null) {
+              var deg = capValue(determineCSSRotationAngle(state), this.declination, 360 - this.declination);
+              state.desiredDegree = deg;
+              // If the current declination does not match the desired one calculate the new
+              // offset. If we cannot go to the desired place in one step, apply partial
+              // rotation and call the animation again.
+              if (state.desiredDegree != state.currentDegree) {
+                var diff = Math.abs(state.desiredDegree - state.currentDegree);
+                if (diff > degreesPerFrame) {
+                  state.currentDegree = (state.desiredDegree < state.currentDegree) ?
+                      state.currentDegree - degreesPerFrame : state.currentDegree + degreesPerFrame;
+                  this._animation();
+                } else {
+                  state.currentDegree = state.desiredDegree;
+                }
+              }
+            }
+
+            // Calculate the fraction from current calculated declination in degrees.
+            var fraction = (state.currentDegree - this.declination) / ((360 - this.declination) - this.declination);
+            // Calculate the current value from the fraction based on degrees.
+            var val = ((this.maximum - this.minimum) * (1 - fraction)) + this.minimum;
+
+            // update the background if the canvas is ready.
+            if (state.updateBackground) {
+              this.updateBackground = false;
+              this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
+            }
+            // Update visual declination.
+            this.$.knob.setAttribute('transform', 'rotate(' + state.currentDegree + ', 100, 100)');
+            // Update visual color.
+            this._iconColor = this.$.range.getColorFromFraction(fraction);
+            // Update visual value.
+            this._visualValue = val;
+          }
+        },
+
+        /**
+         * Handles the case when the value is changed...
+         */
+        _onValueChanged: function(newValue) {
+          if (!this._attached) return;
+        }
+      });
+    })();
   </script>
 </dom-module>

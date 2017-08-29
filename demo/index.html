@@ -24,7 +24,10 @@
       <demo-snippet>
         <template>
           <div>
-            <zi-gauge icon="vent" style="margin:0 auto;" value="99"></zi-gauge>
+            <zi-gauge icon="thermometer" minimum="7" maximum="30" style="margin:0 auto;" value="22" precision="0">
+              <span slot="symbol">°</span>
+              Room 2
+            </zi-gauge>
           </div>
         </template>
       </demo-snippet>
