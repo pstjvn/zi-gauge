@@ -6,21 +6,21 @@
   Provides abstraction over the drawing code for golor range in an arc.
 
   The component is designed to be used in the view (i.e. is has UI component),
-  but also headless drawing is supported. 
+  but also headless drawing is supported.
 
   For all this to work seamlessly we use an animation drawing sync-ed with RAF,
   but we also have a way to force the drawing (for headless mode).
 
   Changing start-color or end-color will trigger the RAF sync-ed operations.
-  After the drawing has completed the arc-ready event will be fired. In this 
+  After the drawing has completed the arc-ready event will be fired. In this
   case the the assumption will be that the enclosing component must have
   size (i.e. no width/height = 0) so the canvas size can match it internally.
 
   In headless mode we go on and set the size to 200x200 and draw the image
   as it is. Note that w only do that is the current size is 0, so one can
-  also set custom size before forcing a drawing. 
+  also set custom size before forcing a drawing.
 
-  Headless drawing is used in the zi-gauge. 
+  Headless drawing is used in the zi-gauge.
 -->
 <dom-module id="color-arc">
   <template>
@@ -95,7 +95,7 @@
            */
           declination: {
             type: Number,
-            value: 29.0
+            value: 0
           },
           /** Helper for referencing the 2d context. */
           _context: Object,
@@ -121,7 +121,7 @@
         },
 
         /**
-         * Provides the mutation step in the drawing animation. 
+         * Provides the mutation step in the drawing animation.
          * If the drawing was canceled, nothing will happen.
          */
         mutate: function(state) {
@@ -138,7 +138,7 @@
 
         /**
          * Exports a public API to allow developer to stop the normal processing
-         * of the animation drawing. 
+         * of the animation drawing.
          */
         cancel: function() {
           this._state.cancel = true;

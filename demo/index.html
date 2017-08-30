@@ -24,9 +24,22 @@
       <demo-snippet>
         <template>
           <div>
-            <zi-gauge icon="thermometer" minimum="7" maximum="30" style="margin:0 auto;" value="22" precision="0">
+            <zi-gauge icon="thermometer" minimum="7" maximum="30" style="margin:0 auto;" disabled value="22" precision="0">
               <span slot="symbol">°</span>
-              Room 2
+              <span slot="label">Temperature</span>
+            </zi-gauge>
+          </div>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge demo</h3>
+      <demo-snippet>
+        <template>
+          <div>
+            <zi-gauge icon="thermometer" minimum="7" maximum="30" style="margin:0 auto;height: 400px; width: 400px;" value="22" precision="0">
+              <span slot="symbol">°</span>
+              <span slot="label">Temperature</span>
             </zi-gauge>
           </div>
         </template>
@@ -36,7 +49,7 @@
       <h3>color-arc demo</h3>
       <demo-snippet>
         <template>
-          <!--<color-arc></color-arc>-->
+          <color-arc></color-arc>
         </template>
       </demo-snippet>
     </div>

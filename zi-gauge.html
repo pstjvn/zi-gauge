@@ -3,6 +3,7 @@
 <link rel="import" href="../zi-animation-factory/zi-animation-factory.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="./color-arc.html">
+<link rel="import" href="./color-range.html">
 
 <!--
 TODO:
@@ -20,10 +21,11 @@ TODO:
         position: relative;
         background-repeat: no-repeat;
         background-position: center;
+        background-size: contain;
       }
 
-      color-arc {
-        display: none;
+      :host([disabled]) {
+        filter: grayscale(90%);
       }
 
       g.thermometer, g.bulb, g.vent, color-arc {
@@ -44,17 +46,35 @@ TODO:
         left: 0;
       }
 
+      /** Makes the knob svg unsusseptive to touches outside the original box. */
+      svg#knob {
+        border-radius: 50%;
+        transform-origin: 50% 50%;
+      }
+
       .text {
+        width: 100%;
+        height: 100%;
+        text-align: center;
         @apply --layout-horizontal;
         @apply --layout-center;
         @apply --layout-center-justified;
       }
 
+      .text ::slotted([slot="label"]) {
+        color: #999999;
+      }
+
+      /** We want the value to be more visible according to user set values */
+      .value {
+        font-size: 2em;
+      }
+
+      /** Make the knob larger when active (mostly for user feedback especially in touch) */
       .knob {
         transform-origin: 50% 50%;
         transition: transform 100ms;
       }
-
       :host(.active) .knob {
         transform: scale(2);
       }
@@ -65,11 +85,10 @@ TODO:
     <div class="text">
       <div>
         <div class="value">
-          <span>[[_displayValue(_visualValue)]]</span>
-          <slot name="symbol"></slot>
+          <span>[[_displayValue(_visualValue)]]</span><slot name="symbol"></slot>
         </div>
         <div class="info">
-          <slot></slot>
+          <slot name="label"></slot>
         </div>
       </div>
     </div>
@@ -370,7 +389,7 @@ TODO:
           /** The precision to use to display the value. */
           precision: { type: Number, value: 0 },
           /** If the control is currently user interactable */
-          disabled: { type: Boolean }
+          disabled: { type: Boolean, reflectToAttribute: true }
         },
 
         /** @override */
@@ -434,6 +453,7 @@ TODO:
         },
 
         _onDown: function(e) {
+          if (this.disabled) return;
           e.preventDefault();
           this._userInteraction = true;
           this._state.rect = this.getBoundingClientRect();
@@ -514,7 +534,7 @@ TODO:
               this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
             }
             // Update visual declination.
-            this.$.knob.setAttribute('transform', 'rotate(' + state.currentDegree + ', 100, 100)');
+            this.$.knob.style.transform = 'rotate(' + state.currentDegree + 'deg)';
             // Update visual color.
             this._iconColor = this.$.range.getColorFromFraction(fraction);
             // Update visual value.
@@ -522,9 +542,7 @@ TODO:
           }
         },
 
-        /**
-         * Handles the case when the value is changed...
-         */
+        /** Handles the case when the value is changed */
         _onValueChanged: function(newValue) {
           if (!this._attached) return;
         }
