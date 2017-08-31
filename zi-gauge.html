@@ -488,7 +488,6 @@ TODO:
           this._state.y = ((e.detail.y - this._state.rect.top) * -1) + (this._state.rect.height / 2);
         },
 
-
         /** This is where the magic happens, everything synced with RAF */
         _mutate: function(state) {
           if (this._attached) {
@@ -558,6 +557,17 @@ TODO:
 
         /** Handles the case when the value is changed */
         _onValueChanged: function(newValue) {
+          // Unfortunately sometimes ppl bind the value to an input
+          // and in this case we receive 'string' instead of number.
+          // This seems like the easiest way to convert back to number
+          // but might lead to infinite loop if the input is also
+          // doing something smart about the values and always wants a string.
+          // Alternatievly we can expolre an option to be a regular input and
+          // always work with strings, but for now this is how it will stay.
+          if (typeof this.value != 'number') {
+            this.value = parseFloat(this.value);
+            return;
+          }
           if (!this._attached) return;
           if (this.value != this._visualValue) {
             if (!this._userInteraction) {
