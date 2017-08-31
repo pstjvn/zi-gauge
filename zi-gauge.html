@@ -475,6 +475,7 @@ TODO:
         _onUp: function() {
           this._userInteraction = false;
           this.classList.remove('active');
+          this._animation();
         },
 
         /**
@@ -543,12 +544,27 @@ TODO:
             this._iconColor = this.$.range.getColorFromFraction(fraction);
             // Update visual value.
             this._visualValue = val;
+            // At this point if we do not have user interaction it measn the user has lifted
+            // the pointer. If the value is settled by animation we can set it on observable
+            // field.
+            // NOTE: the user would expect the value to be sensical, as it is shown so
+            // we use the same value as displayed but parse it as number as the value is
+            // expectd to be a number.
+            if (!this._userInteraction && state.currentDegree == state.desiredDegree) {
+              this.value = parseFloat(this._displayValue(this._visualValue));
+            }
           }
         },
 
         /** Handles the case when the value is changed */
         _onValueChanged: function(newValue) {
           if (!this._attached) return;
+          if (this.value != this._visualValue) {
+            if (!this._userInteraction) {
+              this._state.initial = true;
+              this._animation();
+            }
+          }
         }
       });
     })();
