@@ -28,7 +28,8 @@ TODO:
         filter: grayscale(90%);
       }
 
-      g.thermometer, g.bulb, g.vent, color-arc {
+      /* g.thermometer, g.bulb, g.vent, */
+      color-arc {
         display: none;
       }
 
@@ -49,6 +50,8 @@ TODO:
       /** Makes the knob svg unsusseptive to touches outside the original box. */
       svg#knob {
         border-radius: 50%;
+        -ms-transform-origin: 50% 50%;
+        -webkit-transform-origin: 50% 50%;
         transform-origin: 50% 50%;
       }
 
@@ -65,8 +68,10 @@ TODO:
         color: #999999;
       }
 
-      /** Element hosting the icon if any. We need to use % because we do not know
-      the size of the element. */
+      /**
+       * Element hosting the icon if any. We need to use % because we do not know
+       * the size of the element.
+       */
       .icon {
         width: 50%;
         margin-left: 50%;
@@ -75,6 +80,8 @@ TODO:
       }
 
       .icon ::slotted([slot="icon"]) {
+        -ms-tranform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
         transform: translateX(-50%);
         width: 100%;
         height: 100%;
@@ -91,10 +98,26 @@ TODO:
 
       /** Make the knob larger when active (mostly for user feedback especially in touch) */
       .knob {
+        /**
+         * Firefox/Gecko does not work with this, instead it wants to transform
+         * the group based on the box of the containing SVG
+         * In that case the correct value is: transform-origin: 50% 13%;
+         * However to keep things simple we use this hack from here:
+         * https://bugzilla.mozilla.org/show_bug.cgi?id=1209061
+         */
+        transform-box: fill-box;
+
+        -ms-transform-origin: 50% 50%;
+        -webkit-transform-origin: 50% 50%;
         transform-origin: 50% 50%;
+        -ms-transition: -ms-tranform 100ms;
+        -webkit-transition: -webkit-transform 100ms;
         transition: transform 100ms;
       }
+
       :host(.active) .knob {
+        -ms-transform: scale(2);
+        -webkit-transform: scale(2);
         transform: scale(2);
       }
     </style>
