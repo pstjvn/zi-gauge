@@ -10,8 +10,11 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-icons/hardware-icons.html">
+    <link rel="import" href="../../iron-icon/iron-icon.html">
     <link rel="import" href="../color-arc.html">
     <link rel="import" href="../zi-gauge.html">
+    <link rel="import" href="../zi-thermometer-icon.html">
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
@@ -28,22 +31,66 @@
       <h3>zi-gauge simple</h3>
       <demo-snippet>
         <template>
-          <div>
-            <zi-gauge value="22"></zi-gauge>
-          </div>
+          <zi-gauge value="22"></zi-gauge>
         </template>
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
+      <h3>zi-gauge with iron icon</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="22">
+            <iron-icon slot="icon" icon="hardware:toys"></iron-icon>
+          </zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge with iron icon painting it</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="22" paint-icon>
+            <iron-icon slot="icon" icon="hardware:toys"></iron-icon>
+          </zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge with custom icon painting it</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="22" paint-icon>
+            <zi-thermometer-icon slot="icon"></zi-thermometer-icon>
+          </zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge with svg icon</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="22" paint-icon>
+            <svg slot="icon" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <g>
+                <g>
+                  <path d="M123.538462,130.766414 L123.538462,130.766414 C132.880359,137.783386 138.923077,148.955247 138.923077,161.538462 C138.923077,182.780183 121.70326,200 100.461538,200 C79.2198173,200 62,182.780183 62,161.538462 C62,148.955247 68.0427177,137.783386 77.3846154,130.766414 L77.3846154,23.0769231 C77.3846154,10.3318904 87.7165058,0 100.461538,0 C113.206571,0 123.538462,10.3318904 123.538462,23.0769231 L123.538462,130.766414 Z M85.0769145,134.885611 C75.8799751,140.205757 69.6923077,150.149506 69.6923077,161.538462 C69.6923077,178.531838 83.4681615,192.307692 100.461538,192.307692 C117.454915,192.307692 131.230769,178.531838 131.230769,161.538462 C131.230769,150.149506 125.043102,140.205757 115.846162,134.885611 L115.846154,23.0769231 C115.846154,14.5802346 108.958227,7.69230769 100.461538,7.69230769 C91.96485,7.69230769 85.0769231,14.5802346 85.0769231,23.0769231 L85.0769231,134.885606 L85.0769145,134.885611 Z M105.076923,98.4615385 L105.076923,110.769231 L106.615385,110.769231 C107.465053,110.769231 108.153846,111.458023 108.153846,112.307692 C108.153846,113.157361 107.465053,113.846154 106.615385,113.846154 L105.076923,113.846154 L105.076923,126.153846 L106.615385,126.153846 C107.465053,126.153846 108.153846,126.842639 108.153846,127.692308 C108.153846,128.541977 107.465053,129.230769 106.615385,129.230769 L105.076923,129.230769 L105.076923,145.319696 C111.318626,147.280101 115.846154,153.11132 115.846154,160 C115.846154,168.496688 108.958227,175.384615 100.461538,175.384615 C91.96485,175.384615 85.0769231,168.496688 85.0769231,160 C85.0769231,152.557053 90.3623375,146.34858 97.3846154,144.923133 L97.3846154,129.230769 L95.8461538,129.230769 C94.996485,129.230769 94.3076923,128.541977 94.3076923,127.692308 C94.3076923,126.842639 94.996485,126.153846 95.8461538,126.153846 L97.3846154,126.153846 L97.3846154,113.846154 L95.8461538,113.846154 C94.996485,113.846154 94.3076923,113.157361 94.3076923,112.307692 C94.3076923,111.458023 94.996485,110.769231 95.8461538,110.769231 L97.3846154,110.769231 L97.3846154,98.4615385 L95.8461538,98.4615385 C94.996485,98.4615385 94.3076923,97.7727458 94.3076923,96.9230769 C94.3076923,96.0734081 94.996485,95.3846154 95.8461538,95.3846154 L97.3846154,95.3846154 L97.3846154,70 C97.3846154,67.8758279 99.1065971,66.1538462 101.230769,66.1538462 C103.354941,66.1538462 105.076923,67.8758279 105.076923,70 L105.076923,95.3846154 L106.615385,95.3846154 C107.465053,95.3846154 108.153846,96.0734081 108.153846,96.9230769 C108.153846,97.7727458 107.465053,98.4615385 106.615385,98.4615385 L105.076923,98.4615385 Z"></path>
+                </g>
+              </g>
+            </svg>
+          </zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+
+
+    <div class="vertical-section-container centered">
       <h3>zi-gauge with settings</h3>
       <demo-snippet>
         <template>
-          <div>
-            <zi-gauge icon="thermometer" minimum="7" maximum="30" value="22" precision="2">
-              <span slot="symbol">°</span>
-              <span slot="label">Temperature</span>
-            </zi-gauge>
-          </div>
+          <zi-gauge icon="thermometer" minimum="7" maximum="30" value="22" precision="2">
+            <span slot="symbol">°</span>
+            <span slot="label">Temperature</span>
+          </zi-gauge>
         </template>
       </demo-snippet>
     </div>
@@ -51,12 +98,22 @@
       <h3>zi-gauge with styles</h3>
       <demo-snippet>
         <template>
-          <div>
-            <zi-gauge icon="vent" minimum="0" maximum="3000" style="height: 400px; width: 400px;" value="1200" precision="0">
-              <span slot="symbol">rpm</span>
-              <span slot="label">CPU Fan</span>
-            </zi-gauge>
-          </div>
+          <zi-gauge icon="vent" minimum="0" maximum="3000" style="height: 400px; width: 400px;" value="1200" precision="0">
+            <span slot="symbol">rpm</span>
+            <span slot="label">CPU Fan</span>
+          </zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge with styles and matching icon</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge icon="vent" minimum="0" maximum="3000" style="height: 400px; width: 400px;" value="1200" precision="0" paint-icon>
+            <iron-icon slot="icon" icon="hardware:toys"></iron-icon>
+            <span slot="symbol">rpm</span>
+            <span slot="label">CPU Fan</span>
+          </zi-gauge>
         </template>
       </demo-snippet>
     </div>
@@ -64,12 +121,10 @@
       <h3>zi-gauge disabled</h3>
       <demo-snippet>
         <template>
-          <div>
-            <zi-gauge icon="vent" minimum="0" maximum="3000" value="1200" disabled precision="0">
-              <span slot="symbol">rpm</span>
-              <span slot="label">CPU Fan</span>
-            </zi-gauge>
-          </div>
+          <zi-gauge icon="vent" minimum="0" maximum="3000" value="1200" disabled precision="0">
+            <span slot="symbol">rpm</span>
+            <span slot="label">CPU Fan</span>
+          </zi-gauge>
         </template>
       </demo-snippet>
     </div>
@@ -78,13 +133,11 @@
       <demo-snippet>
         <dom-bind>
           <template>
-            <div>
-              <zi-gauge icon="vent" minimum="0" maximum="3000" value="{{_value}}" precision="0">
-                <span slot="symbol">rpm</span>
-                <span slot="label">CPU Fan</span>
-              </zi-gauge>
-              <input type="number" value="{{_value::input}}">
-            </div>
+            <zi-gauge icon="vent" minimum="0" maximum="3000" value="{{_value}}" precision="0">
+              <span slot="symbol">rpm</span>
+              <span slot="label">CPU Fan</span>
+            </zi-gauge>
+            <input type="number" value="{{_value::input}}">
           </template>
         </dom-bind>
       </demo-snippet>

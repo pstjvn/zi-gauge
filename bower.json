@@ -4,14 +4,14 @@
   "main": "zi-gauge.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "text-to-html": "https://github.com/pstjvn/text-to-html.git",
     "iron-flex-layout": "^2.0.0",
     "zi-animation-factory": "https://github.com/pstjvn/zi-animation-factory.git"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "iron-icons": "^2.0.1"
   },
   "resolutions": {
     "polymer": "^2.0.0"
