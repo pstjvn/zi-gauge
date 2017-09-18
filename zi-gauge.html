@@ -5,12 +5,6 @@
 <link rel="import" href="./color-arc.html">
 <link rel="import" href="./color-range.html">
 
-<!--
-TODO:
-* add support for disabled state
-* add support for setting value externally
-* add support for notifying for value change outside the element
--->
 <dom-module id="zi-gauge">
   <template>
     <style>
@@ -83,7 +77,7 @@ TODO:
       }
 
       :host([paint-icon]) ::slotted([slot="icon"]) {
-        fill: var(--current-color-value);
+        fill: var(--current-color-value, black);
       }
 
       /** We want the value to be more visible according to user set values */
@@ -431,7 +425,20 @@ TODO:
           /** If the control is currently user interactable */
           disabled: { type: Boolean, reflectToAttribute: true },
           /** If we should update the fill property of an svg icon set in slot. */
-          paintIcon: { type: Boolean }
+          paintIcon: { type: Boolean },
+          /**
+           * Observable value to use if we want to have live updates on the
+           * current fraction. Mostly used to make other fancy things linked to
+           * this element work. In order to activate this set `live-update` as
+           * well.
+           */
+          fraction: { type: Number, notify: true },
+          /**
+           * If set we will emit events for the current fraction while the
+           * animation is running. Note that this has its penalty and should be
+           * used sparingly.
+           */
+          liveUpdate: { type: Boolean }
         },
 
         /** @override */
@@ -548,6 +555,7 @@ TODO:
         /** This is where the magic happens, everything synced with RAF */
         _mutate: function(state) {
           if (this._attached) {
+            var fraction = 0;
             // If this is initializing painting, we need to calculate things and
             // set everything immediately.
             if (state.initial) {
@@ -557,9 +565,9 @@ TODO:
                 this._state.x = null;
                 this._state.y = null;
                 // Calculate the fraction the current value represents in the range.
-                var frac = (this.value - this.minimum) / (this.maximum - this.minimum);
+                fraction = (this.value - this.minimum) / (this.maximum - this.minimum);
                 // caluclate the degrees from it fraction
-                var deg = ((360 - this.declination - this.declination) * (1 - frac)) + this.declination;
+                var deg = ((360 - this.declination - this.declination) * (1 - fraction)) + this.declination;
                 state.currentDegree = deg;
                 state.desiredDegree = deg;
                 state.visibleValue = this.value;
@@ -608,6 +616,10 @@ TODO:
             // expectd to be a number.
             if (!this._userInteraction && state.currentDegree == state.desiredDegree) {
               this.value = parseFloat(this._displayValue(this._visualValue));
+            }
+
+            if (this.liveUpdate) {
+              this.fraction = 1 - fraction;
             }
           }
         },

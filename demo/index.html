@@ -56,13 +56,15 @@
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
-      <h3>zi-gauge with custom icon painting it</h3>
+      <h3>zi-gauge with custom icon</h3>
       <demo-snippet>
-        <template>
-          <zi-gauge value="22" paint-icon>
-            <zi-thermometer-icon slot="icon"></zi-thermometer-icon>
-          </zi-gauge>
-        </template>
+        <dom-bind>
+          <template>
+            <zi-gauge value="22" live-update fraction="{{fraction}}" >
+              <zi-thermometer-icon fraction="[[fraction]]" slot="icon"></zi-thermometer-icon>
+            </zi-gauge>
+          </template>
+        </dom-bind>
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">

@@ -1,0 +1,1727 @@
+{
+  "schema_version": "1.0.0",
+  "elements": [
+    {
+      "description": "",
+      "summary": "",
+      "path": "color-adapter.html",
+      "properties": [],
+      "methods": [
+        {
+          "name": "hexToRgb",
+          "description": "Converts #HEX or #HHEEXX colors to RGB array.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 58,
+              "column": 6
+            },
+            "end": {
+              "line": 65,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "hex",
+              "type": "string"
+            }
+          ],
+          "return": {
+            "type": "Array.<number>"
+          }
+        },
+        {
+          "name": "rgbArrayToHex",
+          "description": "Convert RGB array to hex CSS color.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 73,
+              "column": 6
+            },
+            "end": {
+              "line": 75,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "rgb",
+              "type": "Array.<number>",
+              "description": "The [r, g, b] value."
+            }
+          ],
+          "return": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "rgbToHex",
+          "description": "Converts rgb tokens to hex CSS color.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 85,
+              "column": 6
+            },
+            "end": {
+              "line": 97,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "r",
+              "type": "number",
+              "description": "The red channel value."
+            },
+            {
+              "name": "g",
+              "type": "number",
+              "description": "The green channel value."
+            },
+            {
+              "name": "b",
+              "type": "number",
+              "description": "The blue channel value."
+            }
+          ],
+          "return": {
+            "type": "string"
+          }
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 49,
+          "column": 12
+        },
+        "end": {
+          "line": 98,
+          "column": 5
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "attributes": [],
+      "events": [],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [],
+      "tagname": "color-adapter"
+    },
+    {
+      "description": "",
+      "summary": "",
+      "path": "color-range.html",
+      "properties": [
+        {
+          "name": "startColor",
+          "type": "string",
+          "description": "The color to start the range from.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "line": 14,
+              "column": 26
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "endColor",
+          "type": "string",
+          "description": "The color to end the range to.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 16,
+              "column": 8
+            },
+            "end": {
+              "line": 16,
+              "column": 24
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_start",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 17,
+              "column": 8
+            },
+            "end": {
+              "line": 17,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_end",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 18,
+              "column": 8
+            },
+            "end": {
+              "line": 18,
+              "column": 19
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_lastColor",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 19,
+              "column": 8
+            },
+            "end": {
+              "line": 19,
+              "column": 25
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_distance",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 20,
+              "column": 8
+            },
+            "end": {
+              "line": 20,
+              "column": 24
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_revert",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 21,
+              "column": 8
+            },
+            "end": {
+              "line": 21,
+              "column": 22
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        }
+      ],
+      "methods": [
+        {
+          "name": "_init",
+          "description": "Initializes our internal values.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 27,
+              "column": 6
+            },
+            "end": {
+              "line": 51,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "start"
+            },
+            {
+              "name": "end"
+            }
+          ]
+        },
+        {
+          "name": "getColorFromFraction",
+          "description": "Allows the consumers to get color value for the position in the range.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 60,
+              "column": 6
+            },
+            "end": {
+              "line": 73,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "fraction",
+              "type": "number",
+              "description": "A number between 0 and 1."
+            }
+          ],
+          "return": {
+            "type": "string",
+            "desc": "Hex representation of the color value."
+          }
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 10,
+          "column": 12
+        },
+        "end": {
+          "line": 74,
+          "column": 5
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "attributes": [
+        {
+          "name": "start-color",
+          "description": "The color to start the range from.",
+          "sourceRange": {
+            "start": {
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "line": 14,
+              "column": 26
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "end-color",
+          "description": "The color to end the range to.",
+          "sourceRange": {
+            "start": {
+              "line": 16,
+              "column": 8
+            },
+            "end": {
+              "line": 16,
+              "column": 24
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        }
+      ],
+      "events": [],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [],
+      "tagname": "color-range"
+    },
+    {
+      "description": "Provides abstraction over the drawing code for golor range in an arc.\n\n  The component is designed to be used in the view (i.e. is has UI component),\n  but also headless drawing is supported.\n\n  For all this to work seamlessly we use an animation drawing sync-ed with RAF,\n  but we also have a way to force the drawing (for headless mode).\n\n  Changing start-color or end-color will trigger the RAF sync-ed operations.\n  After the drawing has completed the arc-ready event will be fired. In this\n  case the the assumption will be that the enclosing component must have\n  size (i.e. no width/height = 0) so the canvas size can match it internally.\n\n  In headless mode we go on and set the size to 200x200 and draw the image\n  as it is. Note that w only do that is the current size is 0, so one can\n  also set custom size before forcing a drawing.\n\n  Headless drawing is used in the zi-gauge.",
+      "summary": "",
+      "path": "color-arc.html",
+      "properties": [
+        {
+          "name": "width",
+          "type": "number",
+          "description": "Allows to set the width/height of the canvas area externally.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 51,
+              "column": 10
+            },
+            "end": {
+              "line": 53,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "Allows to set the width/height of the canvas area externally.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 55,
+              "column": 10
+            },
+            "end": {
+              "line": 57,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "startColor",
+          "type": "string",
+          "description": "The color to start from - in HEX format.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 59,
+              "column": 10
+            },
+            "end": {
+              "line": 62,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"#000000\""
+        },
+        {
+          "name": "endColor",
+          "type": "string",
+          "description": "The color to end with. in HEX format",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 64,
+              "column": 10
+            },
+            "end": {
+              "line": 67,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"#ffffff\""
+        },
+        {
+          "name": "radiusRatio",
+          "type": "number",
+          "description": "The ratio the drawing implies to match the SVG to be used in original\ndesign requiring this class.\n\nThat is to read: in an image with height 200 pixels. the radius of\nthe circle to be drawing should be the radius of the circle that\nmatches the square with height 200 minus 27.\n\nThis means that for a square with height 100, the radius of the drawn\ncircle should be 100 / 2 * ((100-27) / 100) => 36.5 pixels;",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 79,
+              "column": 10
+            },
+            "end": {
+              "line": 82,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "lineWidth",
+          "type": "number",
+          "description": "The width of the line to draw the arc with.\nThe default value is calculated as ratio from the original drawing.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 87,
+              "column": 10
+            },
+            "end": {
+              "line": 90,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "declination",
+          "type": "number",
+          "description": "The offset at which to start the arc. We consider 12 o'clock to be\n0 degree declination.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 95,
+              "column": 10
+            },
+            "end": {
+              "line": 98,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "0"
+        },
+        {
+          "name": "_context",
+          "type": "Object",
+          "description": "Helper for referencing the 2d context.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 100,
+              "column": 10
+            },
+            "end": {
+              "line": 100,
+              "column": 26
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_animation",
+          "type": "Object",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 101,
+              "column": 10
+            },
+            "end": {
+              "line": 101,
+              "column": 28
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        }
+      ],
+      "methods": [
+        {
+          "name": "ready",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 109,
+              "column": 8
+            },
+            "end": {
+              "line": 113,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "measure",
+          "description": "Provides the measuring state of the animation.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 118,
+              "column": 8
+            },
+            "end": {
+              "line": 120,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "state"
+            }
+          ]
+        },
+        {
+          "name": "mutate",
+          "description": "Provides the mutation step in the drawing animation.\nIf the drawing was canceled, nothing will happen.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 126,
+              "column": 8
+            },
+            "end": {
+              "line": 129,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "state"
+            }
+          ]
+        },
+        {
+          "name": "attached",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 132,
+              "column": 8
+            },
+            "end": {
+              "line": 135,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "cancel",
+          "description": "Exports a public API to allow developer to stop the normal processing\nof the animation drawing.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 142,
+              "column": 8
+            },
+            "end": {
+              "line": 144,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "getArc",
+          "description": "Allows access to the underlying image data.\n\nThis can be useful in scenarios where we know that the image will\nnot change and we want to scale it with CSS and not expose the\ncanvas itself.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 153,
+              "column": 8
+            },
+            "end": {
+              "line": 155,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "createArc",
+          "description": "Protected method - forces the creation of the arc.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 159,
+              "column": 8
+            },
+            "end": {
+              "line": 190,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_getDegreeDeclination",
+          "description": "Helper function to guard for invalid declination values.",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 197,
+              "column": 8
+            },
+            "end": {
+              "line": 202,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "number"
+          }
+        },
+        {
+          "name": "setSize",
+          "description": "Allows to set the size of the canvas.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 208,
+              "column": 8
+            },
+            "end": {
+              "line": 211,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "rect",
+              "type": "{width: number, height: number}"
+            }
+          ]
+        },
+        {
+          "name": "clear",
+          "description": "Clears the whole canvas area.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 214,
+              "column": 8
+            },
+            "end": {
+              "line": 216,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_recalculate",
+          "description": "Triggered when one of the inputs changes.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 219,
+              "column": 8
+            },
+            "end": {
+              "line": 221,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "start"
+            },
+            {
+              "name": "end"
+            },
+            {
+              "name": "dec"
+            },
+            {
+              "name": "r"
+            }
+          ]
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 45,
+          "column": 14
+        },
+        "end": {
+          "line": 222,
+          "column": 7
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "attributes": [
+        {
+          "name": "width",
+          "description": "Allows to set the width/height of the canvas area externally.",
+          "sourceRange": {
+            "start": {
+              "line": 51,
+              "column": 10
+            },
+            "end": {
+              "line": 53,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "description": "Allows to set the width/height of the canvas area externally.",
+          "sourceRange": {
+            "start": {
+              "line": 55,
+              "column": 10
+            },
+            "end": {
+              "line": 57,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "start-color",
+          "description": "The color to start from - in HEX format.",
+          "sourceRange": {
+            "start": {
+              "line": 59,
+              "column": 10
+            },
+            "end": {
+              "line": 62,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "end-color",
+          "description": "The color to end with. in HEX format",
+          "sourceRange": {
+            "start": {
+              "line": 64,
+              "column": 10
+            },
+            "end": {
+              "line": 67,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "radius-ratio",
+          "description": "The ratio the drawing implies to match the SVG to be used in original\ndesign requiring this class.\n\nThat is to read: in an image with height 200 pixels. the radius of\nthe circle to be drawing should be the radius of the circle that\nmatches the square with height 200 minus 27.\n\nThis means that for a square with height 100, the radius of the drawn\ncircle should be 100 / 2 * ((100-27) / 100) => 36.5 pixels;",
+          "sourceRange": {
+            "start": {
+              "line": 79,
+              "column": 10
+            },
+            "end": {
+              "line": 82,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "line-width",
+          "description": "The width of the line to draw the arc with.\nThe default value is calculated as ratio from the original drawing.",
+          "sourceRange": {
+            "start": {
+              "line": 87,
+              "column": 10
+            },
+            "end": {
+              "line": 90,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "declination",
+          "description": "The offset at which to start the arc. We consider 12 o'clock to be\n0 degree declination.",
+          "sourceRange": {
+            "start": {
+              "line": 95,
+              "column": 10
+            },
+            "end": {
+              "line": 98,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        }
+      ],
+      "events": [],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [],
+      "tagname": "color-arc"
+    },
+    {
+      "description": "",
+      "summary": "",
+      "path": "zi-gauge.html",
+      "properties": [
+        {
+          "name": "_state",
+          "type": "Object",
+          "description": "Internal state object. We use it to store the values needed for\nthe animation.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 366,
+              "column": 10
+            },
+            "end": {
+              "line": 389,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_animation",
+          "type": "Object",
+          "description": "Reference to the internal animation that controls the UI changes.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 391,
+              "column": 10
+            },
+            "end": {
+              "line": 391,
+              "column": 37
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_iconColor",
+          "type": "string",
+          "description": "The symbol to use for post value symbol",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 393,
+              "column": 10
+            },
+            "end": {
+              "line": 393,
+              "column": 71
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "observer": "\"_onIconColorChanged\""
+            }
+          }
+        },
+        {
+          "name": "_userInteraction",
+          "type": "boolean",
+          "description": "Track if the user is currently interacting with the UI. If this is\nthe case and a new value arrives externally we need ignore it and\ninstead reset it when the user is done dragging.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 399,
+              "column": 10
+            },
+            "end": {
+              "line": 399,
+              "column": 59
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "_attached",
+          "type": "boolean",
+          "description": "Internal flag to monitor if we are attached to document. If not - avoid extra work",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 401,
+              "column": 10
+            },
+            "end": {
+              "line": 401,
+              "column": 52
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "_visualValue",
+          "type": "number",
+          "description": "Helper for data binding - represent the current value durring animations",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 403,
+              "column": 10
+            },
+            "end": {
+              "line": 403,
+              "column": 40
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The value of the dial.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 407,
+              "column": 10
+            },
+            "end": {
+              "line": 411,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true,
+              "observer": "\"_onValueChanged\""
+            }
+          }
+        },
+        {
+          "name": "minimum",
+          "type": "number",
+          "description": "The minimum value allowed in the slider.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 413,
+              "column": 10
+            },
+            "end": {
+              "line": 413,
+              "column": 44
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "0"
+        },
+        {
+          "name": "maximum",
+          "type": "number",
+          "description": "The maximum value allowed in the slider.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 415,
+              "column": 10
+            },
+            "end": {
+              "line": 415,
+              "column": 46
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "100"
+        },
+        {
+          "name": "startColor",
+          "type": "string",
+          "description": "The start color to use",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 417,
+              "column": 10
+            },
+            "end": {
+              "line": 417,
+              "column": 56
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"#f29093\""
+        },
+        {
+          "name": "endColor",
+          "type": "string",
+          "description": "The end color to use",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 419,
+              "column": 10
+            },
+            "end": {
+              "line": 419,
+              "column": 54
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"#84a0e8\""
+        },
+        {
+          "name": "declination",
+          "type": "number",
+          "description": "The declination from 12 o'clock in degrees. This is not configurable, we use it only for data binding",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 421,
+              "column": 10
+            },
+            "end": {
+              "line": 421,
+              "column": 67
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "readOnly": true
+            }
+          },
+          "defaultValue": "29"
+        },
+        {
+          "name": "precision",
+          "type": "number",
+          "description": "The precision to use to display the value.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 423,
+              "column": 10
+            },
+            "end": {
+              "line": 423,
+              "column": 47
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "0"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "If the control is currently user interactable",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 425,
+              "column": 10
+            },
+            "end": {
+              "line": 425,
+              "column": 63
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "paintIcon",
+          "type": "boolean",
+          "description": "If we should update the fill property of an svg icon set in slot.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 427,
+              "column": 10
+            },
+            "end": {
+              "line": 427,
+              "column": 38
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        }
+      ],
+      "methods": [
+        {
+          "name": "ready",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 431,
+              "column": 8
+            },
+            "end": {
+              "line": 436,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "attached",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 439,
+              "column": 8
+            },
+            "end": {
+              "line": 444,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "detached",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 447,
+              "column": 8
+            },
+            "end": {
+              "line": 451,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_checkValueWithinLimits",
+          "description": "Checks if the value we are about to se is within the limits allowed.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 457,
+              "column": 8
+            },
+            "end": {
+              "line": 467,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "_displayValue",
+          "description": "Observes the current value and prepares it to a string for HTML\nrendering.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 475,
+              "column": 8
+            },
+            "end": {
+              "line": 477,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "val",
+              "type": "number"
+            }
+          ],
+          "return": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "_onArcReady",
+          "description": "Handles signalling from arc when drawing is ready.\nWe postpone the drawing to the next frame, so from changing the\ncolors it would take at least 2 RAF to see the final result as the\narc itself is also syncing with the RAF.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 488,
+              "column": 8
+            },
+            "end": {
+              "line": 491,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "e",
+              "type": "CustomEvent"
+            }
+          ]
+        },
+        {
+          "name": "_onDown",
+          "description": "Handles the start of a tracking on the track-enabled layer.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 498,
+              "column": 8
+            },
+            "end": {
+              "line": 506,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "e",
+              "type": "CustomEvent"
+            }
+          ]
+        },
+        {
+          "name": "_onTrack",
+          "description": "Handles the track event from the gesture system of polymer.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 513,
+              "column": 8
+            },
+            "end": {
+              "line": 518,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "e",
+              "type": "CustomEvent"
+            }
+          ]
+        },
+        {
+          "name": "_onUp",
+          "description": "Handles the end event from the track gesture system.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 525,
+              "column": 8
+            },
+            "end": {
+              "line": 529,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_recordInteraction",
+          "description": "Given a gesture event records the position of the event in an\ninternal coordinate system to make later calculations easier.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 536,
+              "column": 8
+            },
+            "end": {
+              "line": 539,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "e",
+              "type": "!CustomEvent"
+            }
+          ]
+        },
+        {
+          "name": "_mutate",
+          "description": "This is where the magic happens, everything synced with RAF",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 542,
+              "column": 8
+            },
+            "end": {
+              "line": 606,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "state"
+            }
+          ]
+        },
+        {
+          "name": "_onIconColorChanged",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 608,
+              "column": 8
+            },
+            "end": {
+              "line": 617,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_onValueChanged",
+          "description": "Handles the case when the value is changed",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 620,
+              "column": 8
+            },
+            "end": {
+              "line": 639,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "newValue"
+            }
+          ]
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 358,
+          "column": 14
+        },
+        "end": {
+          "line": 640,
+          "column": 7
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "The value of the dial.",
+          "sourceRange": {
+            "start": {
+              "line": 407,
+              "column": 10
+            },
+            "end": {
+              "line": 411,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "minimum",
+          "description": "The minimum value allowed in the slider.",
+          "sourceRange": {
+            "start": {
+              "line": 413,
+              "column": 10
+            },
+            "end": {
+              "line": 413,
+              "column": 44
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "maximum",
+          "description": "The maximum value allowed in the slider.",
+          "sourceRange": {
+            "start": {
+              "line": 415,
+              "column": 10
+            },
+            "end": {
+              "line": 415,
+              "column": 46
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "start-color",
+          "description": "The start color to use",
+          "sourceRange": {
+            "start": {
+              "line": 417,
+              "column": 10
+            },
+            "end": {
+              "line": 417,
+              "column": 56
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "end-color",
+          "description": "The end color to use",
+          "sourceRange": {
+            "start": {
+              "line": 419,
+              "column": 10
+            },
+            "end": {
+              "line": 419,
+              "column": 54
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "declination",
+          "description": "The declination from 12 o'clock in degrees. This is not configurable, we use it only for data binding",
+          "sourceRange": {
+            "start": {
+              "line": 421,
+              "column": 10
+            },
+            "end": {
+              "line": 421,
+              "column": 67
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "precision",
+          "description": "The precision to use to display the value.",
+          "sourceRange": {
+            "start": {
+              "line": 423,
+              "column": 10
+            },
+            "end": {
+              "line": 423,
+              "column": 47
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "disabled",
+          "description": "If the control is currently user interactable",
+          "sourceRange": {
+            "start": {
+              "line": 425,
+              "column": 10
+            },
+            "end": {
+              "line": 425,
+              "column": 63
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "paint-icon",
+          "description": "If we should update the fill property of an svg icon set in slot.",
+          "sourceRange": {
+            "start": {
+              "line": 427,
+              "column": 10
+            },
+            "end": {
+              "line": 427,
+              "column": 38
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        }
+      ],
+      "events": [
+        {
+          "type": "CustomEvent",
+          "name": "value-changed",
+          "description": "Fired when the `value` property changes.",
+          "metadata": {}
+        }
+      ],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [
+        {
+          "description": "",
+          "name": "symbol",
+          "range": {
+            "file": "zi-gauge.html",
+            "start": {
+              "line": 118,
+              "column": 54
+            },
+            "end": {
+              "line": 118,
+              "column": 81
+            }
+          }
+        },
+        {
+          "description": "",
+          "name": "label",
+          "range": {
+            "file": "zi-gauge.html",
+            "start": {
+              "line": 121,
+              "column": 10
+            },
+            "end": {
+              "line": 121,
+              "column": 36
+            }
+          }
+        },
+        {
+          "description": "",
+          "name": "icon",
+          "range": {
+            "file": "zi-gauge.html",
+            "start": {
+              "line": 126,
+              "column": 6
+            },
+            "end": {
+              "line": 126,
+              "column": 31
+            }
+          }
+        }
+      ],
+      "tagname": "zi-gauge"
+    },
+    {
+      "description": "",
+      "summary": "",
+      "path": "zi-thermometer-icon.html",
+      "properties": [],
+      "methods": [],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 24,
+          "column": 12
+        },
+        "end": {
+          "line": 26,
+          "column": 5
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "attributes": [],
+      "events": [],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [],
+      "tagname": "zi-thermometer-icon"
+    }
+  ]
+}
