@@ -1,0 +1,206 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="zi-svg-arc">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        width: 200px;
+        height: 200px;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+    <svg id="svg"
+        viewBox="0 0 200 200"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path id="arcpath" fill="none" stroke$="[[color]]" stroke-width="4.5" d$="[[__drawing]]"></path>
+    </svg>
+  </template>
+  <script>
+    Polymer({
+      is: 'zi-svg-arc',
+      properties: {
+        declination: {
+          type: Number,
+          value: 31,
+          observer: '_adjustDeclination'
+        },
+        color: {
+          type: String,
+          value: 'black'
+          // value: '#efefef'
+        },
+        __declination: {
+          type: Number,
+          observer: '_onDeclinationChanged'
+        }
+      },
+
+      /**
+       * Because we expect the angle to be passed as offset from the topmost
+       * point (i.e. 12 o'clock) we need to rotate it 90 degrees counter
+       * clockwise to achive the correct angle for the calculations.
+       *
+       * @param {number} degree
+       * @return {number}
+       */
+      __rotateDegreeToOurCoordinates: function(degree) {
+        var tmp = degree - 90;
+        return tmp < 0 ? tmp + 360 : tmp;
+      },
+
+      /**
+       * Convert degrees to radians so we can use it in calculations.
+       *
+       * @param {number} deg
+       * @return {number}
+       */
+      __degreesToRadians: function(deg) {
+        return deg * Math.PI / 180;
+      },
+
+      /**
+       * Calculate the `d` for a path based on a config for an arc.
+       *
+       * @param {!Object} config
+       * @return {string}
+       */
+      __getPathDescription: function(config) {
+        return (
+            `M${config.outer.start.x} ${config.outer.start.y} ` +
+            `A${config.outer.radius} ${config.outer.radius} ` +
+            `0 1 1 ${config.outer.end.x} ${config.outer.end.y} ` +
+            `M${config.inner.start.x} ${config.inner.start.y} ` +
+            `A${config.inner.radius} ${config.inner.radius} ` +
+            `0 1 1 ${config.inner.end.x} ${config.inner.end.y} ` +
+            `M${config.leftcap.start.x} ${config.leftcap.start.y} ` +
+            `A${config.leftcap.radius} ${config.leftcap.radius} ` +
+            `${this.__rotateDegreeToOurCoordinates(this.__declination)} ` +
+            `1 0 ${config.leftcap.end.x} ${config.leftcap.end.y} ` +
+            `M${config.rightcap.start.x} ${config.rightcap.start.y} ` +
+            `A${config.rightcap.radius} ${config.rightcap.radius} ` +
+            `${this.__rotateDegreeToOurCoordinates(360 - this.__declination)} ` +
+            `1 0 ${config.rightcap.end.x} ${config.rightcap.end.y}`);
+      },
+
+      /**
+       * Make all calcultions for the positioning of the arcs here.
+       *
+       * @param {number} s The starting declination (right hand) in radians.
+       * @param {number} e The end declination (left hand) in radians.
+       * @return {!Object} The config to draw with.
+       */
+      __createConfig: function(s, e) {
+        var outerRadius = 77.5;
+        var innerRadius = 69;
+        var capradius = (outerRadius - innerRadius) / 2;
+        var inner = {
+          radius: innerRadius,
+          start: {
+            x: (100 + (innerRadius * Math.cos(s))),
+            y: (100 + (innerRadius * Math.sin(s)))
+          }, end: {
+            x: (100 + (innerRadius * Math.cos(e))),
+            y: (100 + (innerRadius * Math.sin(e)))
+          }
+        };
+        var outer = {
+          radius: outerRadius,
+          start: {
+            x: (100 + (outerRadius * Math.cos(s))),
+            y: (100 + (outerRadius * Math.sin(s)))
+          }, end: {
+            x: (100 + (outerRadius * Math.cos(e))),
+            y: (100 + (outerRadius * Math.sin(e)))
+          }
+        };
+        var leftcap = {
+          radius: capradius,
+          start: {
+            x: outer.start.x,
+            y: outer.start.y
+          }, end: {
+            x: inner.start.x,
+            y: inner.start.y
+          }
+        };
+        var rightcap = {
+          radius: capradius,
+          start: {
+            x: inner.end.x,
+            y: inner.end.y
+          }, end: {
+            x: outer.end.x,
+            y: outer.end.y
+          }
+        };
+        return {
+          inner: inner,
+          outer: outer,
+          leftcap: leftcap,
+          rightcap: rightcap
+        }
+      },
+
+      /**
+       * We need to adjust the declination degree a bit beause of how
+       * arcs are being drawn - we need to offset with the radius of the
+       * cap arc minus half of the width of the stroke so we are sure
+       * that the SVG caps cover the edges of the underlying canvas drawing.
+       *
+       * The radius is (77.5 - 69) / 2 and the stroke is 4 so - 2.5;
+       */
+      _adjustDeclination: function() {
+        this.__declination = this.declination + 2.5;
+      },
+
+      /**
+       * Handle the change of declination. We need to redraw the whole SVG
+       * in this case.
+       */
+      _onDeclinationChanged: function() {
+        // Guard against non-sensical values.
+        if (this.__declination < 5 || this.__declination > 179) {
+          // FIXME: we should do something meaningful to the user when the
+          // value is not okay.
+          return;
+        }
+
+        // EXPLANATION
+        // 23 pixels to first arc
+        // 4 pixels arc width (stroke width)
+        // 9 pixels between two arcs // 32
+        // 68 pixels to center
+        // so radius = 77.5 from center 100x100
+        // second radius = 77.5 - 9 => 42 (we use 9 instead of 8.5 because it
+        // simply looks better)
+
+        // EXAMPLE
+        // circle center = 100x100
+        // circle radius = 77.5 // inner cicleradius = 69
+        // start angle = 29.0
+        // start angle in rotation = 29.0 - 90 => 299
+        // start in rad = 5.218534463463045
+        // x = a + r * cos(rad) = 100 + (77 * Math.cos(5.218534463463045)) = 137.3303407589679
+        // y = b + r * sin(rad) = 100 + (77 * Math.sin(5.218534463463045)) = 32.6542825502665
+        var startRad = this.__degreesToRadians(
+            this.__rotateDegreeToOurCoordinates(this.__declination));
+        var endRad = this.__degreesToRadians(
+            this.__rotateDegreeToOurCoordinates(360 - this.__declination));
+        var d = this.__getPathDescription(this.__createConfig(startRad, endRad));
+        this.$.arcpath.setAttribute('d', d);
+      }
+    });
+  </script>
+</dom-module>

@@ -14,6 +14,7 @@
     <link rel="import" href="../../iron-icon/iron-icon.html">
     <link rel="import" href="../color-arc.html">
     <link rel="import" href="../zi-gauge.html">
+    <link rel="import" href="../zi-svg-arc.html">
     <link rel="import" href="../zi-thermometer-icon.html">
 
     <custom-style>
@@ -32,6 +33,14 @@
       <demo-snippet>
         <template>
           <zi-gauge value="22"></zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-gauge custom declination </h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="42" declination="88"></zi-gauge>
         </template>
       </demo-snippet>
     </div>
@@ -142,6 +151,14 @@
             <input type="number" value="{{_value::input}}">
           </template>
         </dom-bind>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
+      <h3>zi-svg-arc</h3>
+      <demo-snippet>
+        <template>
+          <zi-svg-arc></zi-svg-arc>
+        </template>
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
