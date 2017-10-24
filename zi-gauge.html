@@ -18,16 +18,11 @@
         background-position: center;
         background-size: contain;
       }
-
-      :host([disabled]) {
-        filter: grayscale(90%);
-      }
-
+      :host .acontrol { display: none; }
+      :host([disabled]) { filter: grayscale(90%); }
       :host([disabled]) #knob { display: none; }
-
-      color-arc {
-        display: none;
-      }
+      :host([controls]) .acontrol { display: inherit; }
+      color-arc { display: none; }
 
       .text, svg, zi-svg-arc {
         position: absolute;
@@ -131,8 +126,8 @@
     <svg version="1.1" viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         xml:space="preserve">
-      <rect fill$="[[endColor]]" x="15.6" y="39.406" width="10" height="2"/>
-      <polygon fill$="[[startColor]]" points="184.4,39.406 180.4,39.406 180.4,35.406 178.4,35.406 178.4,39.406 174.4,39.406 174.4,41.406 178.4,41.406 178.4,45.406 180.4,45.406 180.4,41.406 184.4,41.406"/>
+      <rect class="acontrol" fill$="[[endColor]]" x="15.6" y="39.406" width="10" height="2"/>
+      <polygon class="acontrol" fill$="[[startColor]]" points="184.4,39.406 180.4,39.406 180.4,35.406 178.4,35.406 178.4,39.406 174.4,39.406 174.4,41.406 178.4,41.406 178.4,45.406 180.4,45.406 180.4,41.406 184.4,41.406"/>
     </svg>
     <svg version="1.1" viewBox="0 0 200 200"
         id="knob"
@@ -433,7 +428,12 @@
            * animation is running. Note that this has its penalty and should be
            * used sparingly.
            */
-          liveUpdate: { type: Boolean }
+          liveUpdate: { type: Boolean },
+          /**
+           * If present in the DOM it will trigger the display of the controls
+           * on top of the arc (plus and minus signs).
+           */
+          controls: { type: Boolean, readOnly: true }
         },
 
         /** @override */
