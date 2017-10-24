@@ -37,6 +37,14 @@
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
+      <h3>zi-gauge with controls enabled</h3>
+      <demo-snippet>
+        <template>
+          <zi-gauge value="22" controls></zi-gauge>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="vertical-section-container centered">
       <h3>zi-gauge custom declination </h3>
       <demo-snippet>
         <template>
@@ -67,13 +75,15 @@
     <div class="vertical-section-container centered">
       <h3>zi-gauge with custom icon</h3>
       <demo-snippet>
-        <dom-bind>
-          <template>
-            <zi-gauge value="22" live-update fraction="{{fraction}}" >
-              <zi-thermometer-icon fraction="[[fraction]]" slot="icon"></zi-thermometer-icon>
-            </zi-gauge>
-          </template>
-        </dom-bind>
+        <template>
+          <dom-bind>
+            <template>
+              <zi-gauge value="22" live-update fraction="{{fraction}}" >
+                <zi-thermometer-icon fraction="[[fraction]]" slot="icon"></zi-thermometer-icon>
+              </zi-gauge>
+            </template>
+          </dom-bind>
+        </template>
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
@@ -142,15 +152,17 @@
     <div class="vertical-section-container centered">
       <h3>zi-gauge value binding</h3>
       <demo-snippet>
-        <dom-bind>
-          <template>
-            <zi-gauge icon="vent" minimum="0" maximum="3000" value="{{_value}}" precision="0">
-              <span slot="symbol">rpm</span>
-              <span slot="label">CPU Fan</span>
-            </zi-gauge>
-            <input type="number" value="{{_value::input}}">
-          </template>
-        </dom-bind>
+        <template>
+          <dom-bind>
+            <template>
+              <zi-gauge icon="vent" minimum="0" maximum="3000" value="{{_value}}" precision="0">
+                <span slot="symbol">rpm</span>
+                <span slot="label">CPU Fan</span>
+              </zi-gauge>
+              <input type="number" value="{{_value::input}}">
+            </template>
+          </dom-bind>
+        </template>
       </demo-snippet>
     </div>
     <div class="vertical-section-container centered">
