@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../zi-animation-factory/zi-animation-factory.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
@@ -79,6 +79,7 @@
       /** We want the value to be more visible according to user set values */
       .value {
         font-size: 2em;
+        @apply --gauge-value-styles;
       }
 
       /** Make the knob larger when active (mostly for user feedback especially in touch) */

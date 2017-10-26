@@ -9,7 +9,6 @@
         width: 200px;
         height: 200px;
       }
-
       svg {
         width: 100%;
         height: 100%;
@@ -74,16 +73,17 @@
        * Calculate the `d` for a path based on a config for an arc.
        *
        * @param {!Object} config
+       * @param {!boolean} use_large
        * @return {string}
        */
-      __getPathDescription: function(config) {
+      __getPathDescription: function(config, use_large) {
         return (
             `M${config.outer.start.x} ${config.outer.start.y} ` +
             `A${config.outer.radius} ${config.outer.radius} ` +
-            `0 1 1 ${config.outer.end.x} ${config.outer.end.y} ` +
+            `0 ${+use_large} 1 ${config.outer.end.x} ${config.outer.end.y} ` +
             `M${config.inner.start.x} ${config.inner.start.y} ` +
             `A${config.inner.radius} ${config.inner.radius} ` +
-            `0 1 1 ${config.inner.end.x} ${config.inner.end.y} ` +
+            `0 ${+use_large} 1 ${config.inner.end.x} ${config.inner.end.y} ` +
             `M${config.leftcap.start.x} ${config.leftcap.start.y} ` +
             `A${config.leftcap.radius} ${config.leftcap.radius} ` +
             `${this.__rotateDegreeToOurCoordinates(this.__declination)} ` +
@@ -159,6 +159,7 @@
        * cap arc minus half of the width of the stroke so we are sure
        * that the SVG caps cover the edges of the underlying canvas drawing.
        *
+       *
        * The radius is (77.5 - 69) / 2 and the stroke is 4 so - 2.5;
        */
       _adjustDeclination: function() {
@@ -198,7 +199,8 @@
             this.__rotateDegreeToOurCoordinates(this.__declination));
         var endRad = this.__degreesToRadians(
             this.__rotateDegreeToOurCoordinates(360 - this.__declination));
-        var d = this.__getPathDescription(this.__createConfig(startRad, endRad));
+        var d = this.__getPathDescription(this.__createConfig(startRad, endRad),
+            this.__declination < 88);
         this.$.arcpath.setAttribute('d', d);
       }
     });

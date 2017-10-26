@@ -181,7 +181,7 @@
             // TODO: Measure this - it might be a performance regression because of the comparison.
             // Draw the arcs on top of each other to avoid gaps
             // For the last stroke we need only once degree!
-            if (i+2 == degreesToDraw) {
+            if (i+1 == degreesToDraw) {
               this._context.arc(x, y, radius, rad, rad + constants.OneDegree, false);
             } else {
               this._context.arc(x, y, radius, rad, rad + constants.TwoDegrees, false);
