@@ -30,6 +30,15 @@
         top: 0;
         left: 0;
       }
+      .guard {
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        top: 25%;
+        left: 25%;
+        overflow: hidden;
+        border-radius: 50%;
+      }
       /** Makes the knob svg unsusseptive to touches outside the original box. */
       svg#knob {
         border-radius: 50%;
@@ -142,10 +151,10 @@
         </g>
       </g>
     </svg>
+    <div class="guard"></div>
   </template>
   <script>
     // TODO:
-    // * fix border for zi-gauge - 50% overflow hidden = prevent clicking outside of element to trogger - this only when controls are disabled, otherwise they are cut off.
     // * fix how animation is calculated - on slow devices one frame takes > 16 ms
     (function() {
       var maxDegrees = 360; // max degree we can change to
