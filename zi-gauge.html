@@ -417,7 +417,11 @@
           /** The precision to use to display the value. */
           precision: { type: Number, value: 0 },
           /** If the control is currently user interactable */
-          disabled: { type: Boolean, reflectToAttribute: true },
+          disabled: {
+            type: Boolean,
+            reflectToAttribute: true,
+            observer: '_onIconColorChanged'
+          },
           /** If we should update the fill property of an svg icon set in slot. */
           paintIcon: { type: Boolean },
           /**
@@ -628,10 +632,13 @@
         _onIconColorChanged: function() {
           if (!this.paintIcon) return;
           if (ShadyCSS) {
-            Polymer.dom(this).querySelector('[slot="icon"]').style.fill = this._iconColor;
+            Polymer.dom(this).querySelector(
+                '[slot="icon"]').style.fill = this.disabled ?
+                this.disabledColor | this._iconColor;
           } else {
             this.updateStyles({
-              '--current-color-value': this._iconColor
+              '--current-color-value': this.disabled ?
+                  this.disabledColor : this._iconColor;
             });
           }
         },
