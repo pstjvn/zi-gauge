@@ -17,12 +17,17 @@
         top: 0;
         left: 0;
       }
+      #trailer { display: none; }
+      :host[disabled] #trailer {
+        display: block;
+      }
     </style>
     <svg id="svg"
         viewBox="0 0 200 200"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path id="trailer" fill="none" stroke$="[[disabledColor]]" stroke-width="5"></path>
       <path id="arcpath" fill="none" stroke$="[[color]]" stroke-width="4.5"></path>
     </svg>
   </template>
@@ -30,15 +35,27 @@
     Polymer({
       is: 'zi-svg-arc',
       properties: {
+        /**
+         * The declination to use in degree, 12 o'clock being 0 degrees.
+         */
         declination: {
           type: Number,
           value: 31,
           observer: '_adjustDeclination'
         },
+        /**
+         * The color to use to draw the trailer when in disabled state.
+         */
+        disabledColor: {
+          type: String,
+          value: '#cccccc'
+        },
+        /**
+         * The color to use to draw the trailer frame.
+         */
         color: {
           type: String,
           value: 'black'
-          // value: '#efefef'
         },
         __declination: {
           type: Number,
@@ -95,6 +112,19 @@
       },
 
       /**
+       * Calculate the `d` for a path based on a config for an arc.
+       *
+       * @param {!Object} config
+       * @param {!boolean} use_large
+       * @return {string}
+       */
+      __getInactivePathDescription: function(config, use_large) {
+        return `M${config.middle.start.x} ${config.middle.start.y} ` +
+        `A${config.middle.radius} ${config.middle.radius} ` +
+        `0 ${+use_large} 1 ${config.middle.end.x} ${config.middle.end.y}`;
+      },
+
+      /**
        * Make all calcultions for the positioning of the arcs here.
        *
        * @param {number} s The starting declination (right hand) in radians.
@@ -104,7 +134,18 @@
       __createConfig: function(s, e) {
         var outerRadius = 77.5;
         var innerRadius = 69;
+        var middleRadius = ((outerRadius - innerRadius) / 2) + innerRadius;
         var capradius = (outerRadius - innerRadius) / 2;
+        var middle = {
+          radius: middleRadius,
+          start: {
+            x: 100 + middleRadius * Math.cos(s - this.__degreesToRadians(2.5)),
+            y: 100 + middleRadius * Math.sin(s - this.__degreesToRadians(2.5))
+          }, end : {
+            x: 100 + middleRadius * Math.cos(e + this.__degreesToRadians(2.5)),
+            y: 100 + middleRadius * Math.sin(e + this.__degreesToRadians(2.5))
+          }
+        };
         var inner = {
           radius: innerRadius,
           start: {
@@ -146,6 +187,7 @@
           }
         };
         return {
+          middle: middle,
           inner: inner,
           outer: outer,
           leftcap: leftcap,
@@ -199,9 +241,12 @@
             this.__rotateDegreeToOurCoordinates(this.__declination));
         var endRad = this.__degreesToRadians(
             this.__rotateDegreeToOurCoordinates(360 - this.__declination));
-        var d = this.__getPathDescription(this.__createConfig(startRad, endRad),
-            this.__declination < 88);
-        this.$.arcpath.setAttribute('d', d);
+        var config = this.__createConfig(startRad, endRad);
+        var isSmallerArcThanHalfCircle = this.__declination < 88;
+        this.$.arcpath.setAttribute('d', this.__getPathDescription(
+            config, isSmallerArcThanHalfCircle));
+        this.$.trailer.setAttribute('d', this.__getInactivePathDescription(
+            config, isSmallerArcThanHalfCircle));
       }
     });
   </script>
