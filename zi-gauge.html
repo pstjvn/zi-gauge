@@ -7,7 +7,7 @@
 <link rel="import" href="./zi-svg-arc.html">
 
 <dom-module id="zi-gauge">
-  <template>
+  <template strip-whitespace>
     <style>
       :host {
         display: block;
@@ -22,7 +22,6 @@
       :host([disabled]) #knob { display: none; }
       :host([controls]) .acontrol { display: inherit; }
       color-arc { display: none; }
-
       .text, svg, zi-svg-arc {
         position: absolute;
         width: 100%;
@@ -30,7 +29,6 @@
         top: 0;
         left: 0;
       }
-
       /** Makes the knob svg unsusseptive to touches outside the original box. */
       svg#knob {
         border-radius: 50%;
@@ -38,7 +36,6 @@
         -webkit-transform-origin: 50% 50%;
         transform-origin: 50% 50%;
       }
-
       .text {
         width: 100%;
         height: 100%;
@@ -47,11 +44,9 @@
         @apply --layout-center;
         @apply --layout-center-justified;
       }
-
       .text ::slotted([slot="label"]) {
         color: #999999;
       }
-
       /**
        * Element hosting the icon if any. We need to use % because we do not know
        * the size of the element.
@@ -62,7 +57,6 @@
         padding-top: 8%;
         height: 20%;
       }
-
       .icon ::slotted([slot="icon"]) {
         -ms-tranform: translateX(-50%);
         -webkit-transform: translateX(-50%);
@@ -70,17 +64,14 @@
         width: 100%;
         height: 100%;
       }
-
       :host([paint-icon]) ::slotted([slot="icon"]) {
         fill: var(--current-color-value, black);
       }
-
       /** We want the value to be more visible according to user set values */
       .value {
         font-size: 2em;
         @apply --gauge-value-styles;
       }
-
       /** Make the knob larger when active (mostly for user feedback especially in touch) */
       .knob {
         /**
@@ -91,7 +82,6 @@
          * https://bugzilla.mozilla.org/show_bug.cgi?id=1209061
          */
         transform-box: fill-box;
-
         -ms-transform-origin: 50% 50%;
         -webkit-transform-origin: 50% 50%;
         transform-origin: 50% 50%;
@@ -99,7 +89,6 @@
         -webkit-transition: -webkit-transform 100ms;
         transition: transform 100ms;
       }
-
       :host(.active) .knob {
         -ms-transform: scale(2);
         -webkit-transform: scale(2);
@@ -122,7 +111,13 @@
     <div class="icon">
       <slot name="icon"></slot>
     </div>
-    <zi-svg-arc use-grid="[[useGrid]]" disabled$="[[disabled]]" declination="[[declination]]" color="#f7f7f7"></zi-svg-arc>
+    <zi-svg-arc
+        use-grid="[[useGrid]]"
+        disabled$="[[disabled]]"
+        disabled-color="[[disabledColor]]"
+        declination="[[declination]]"
+        color="#f7f7f7">
+    </zi-svg-arc>
     <svg version="1.1" viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         xml:space="preserve">
@@ -151,7 +146,6 @@
     // TODO:
     // * fix border for zi-gauge - 50% overflow hidden = prevent clicking outside of element to trogger - this only when controls are disabled, otherwise they are cut off.
     // * fix how animation is calculated - on slow devices one frame takes > 16 ms
-    // * investigate why on slow device a frame takes 10x normal frame.
     (function() {
       var maxDegrees = 360; // max degree we can change to
       var maxTime = 850; // max time if we want to change max degrees
@@ -422,6 +416,10 @@
             reflectToAttribute: true,
             observer: '_onIconColorChanged'
           },
+          disabledColor: {
+            type: String,
+            value: '#cccccc'
+          },
           /** If we should update the fill property of an svg icon set in slot. */
           paintIcon: { type: Boolean },
           /**
@@ -604,7 +602,7 @@
 
             // update the background if the canvas is ready.
             if (state.updateBackground) {
-              this.updateBackground = false;
+              state.updateBackground = false;
               this.style.backgroundImage = 'url(' + this.$.arc.getArc() + ')';
             }
             // Update visual declination.
@@ -634,11 +632,11 @@
           if (ShadyCSS) {
             Polymer.dom(this).querySelector(
                 '[slot="icon"]').style.fill = this.disabled ?
-                this.disabledColor | this._iconColor;
+                this.disabledColor : this._iconColor;
           } else {
             this.updateStyles({
-              '--current-color-value': this.disabled ?
-                  this.disabledColor : this._iconColor;
+              '--current-color-value': (this.disabled ?
+                  this.disabledColor : this._iconColor)
             });
           }
         },
