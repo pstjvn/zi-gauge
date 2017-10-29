@@ -29,33 +29,40 @@
         xmlns:xlink="http://www.w3.org/1999/xlink">
       <path id="trailer" fill="none" stroke$="[[disabledColor]]" stroke-width="5"></path>
       <path id="arcpath" fill="none" stroke$="[[color]]" stroke-width="4.5"></path>
+      <path id="grid" fill="none" stroke$="[[color]]" stroke-width="1"></path>
     </svg>
   </template>
   <script>
+  (function() {
+    /**
+     * The code is based on a canvas of 200x200 points.
+     */
+    var outerRadius = 77.5;
+    var innerRadius = 69;
+
     Polymer({
       is: 'zi-svg-arc',
       properties: {
-        /**
-         * The declination to use in degree, 12 o'clock being 0 degrees.
-         */
+        /** The declination to use in degree, 12 o'clock being 0 degrees. */
         declination: {
           type: Number,
           value: 31,
           observer: '_adjustDeclination'
         },
-        /**
-         * The color to use to draw the trailer when in disabled state.
-         */
+        /** The color to use to draw the trailer when in disabled state. */
         disabledColor: {
           type: String,
           value: '#cccccc'
         },
-        /**
-         * The color to use to draw the trailer frame.
-         */
+        /** The color to use to draw the trailer frame. */
         color: {
           type: String,
           value: 'black'
+        },
+        /** If we should use a grid in the trailer */
+        useGrid: {
+          type: Boolean,
+          observer: '_onDeclinationChanged'
         },
         __declination: {
           type: Number,
@@ -132,8 +139,6 @@
        * @return {!Object} The config to draw with.
        */
       __createConfig: function(s, e) {
-        var outerRadius = 77.5;
-        var innerRadius = 69;
         var middleRadius = ((outerRadius - innerRadius) / 2) + innerRadius;
         var capradius = (outerRadius - innerRadius) / 2;
         var middle = {
@@ -243,11 +248,30 @@
             this.__rotateDegreeToOurCoordinates(360 - this.__declination));
         var config = this.__createConfig(startRad, endRad);
         var isSmallerArcThanHalfCircle = this.__declination < 88;
+
+        this.$.grid.setAttribute('d', this.useGrid ?
+            this.__generateGridDescription() : '');
         this.$.arcpath.setAttribute('d', this.__getPathDescription(
             config, isSmallerArcThanHalfCircle));
         this.$.trailer.setAttribute('d', this.__getInactivePathDescription(
             config, isSmallerArcThanHalfCircle));
+      },
+
+      __generateGridDescription: function() {
+        var startAngle = Math.ceil(this.__declination / 6) * 6;
+        var endAngle = 360 - startAngle;
+        var result = '';
+        for (var i = startAngle; i <= endAngle; i += 6) {
+          var rad = this.__degreesToRadians(this.__rotateDegreeToOurCoordinates(i));
+          var sin = Math.sin(rad);
+          var cos = Math.cos(rad);
+          result += `M${100 + outerRadius * cos} `+
+              `${100 + outerRadius * sin}L`+
+              `${100 + innerRadius * cos} ${100 + innerRadius * sin}`;
+        }
+        return result;
       }
     });
+  })();
   </script>
 </dom-module>
