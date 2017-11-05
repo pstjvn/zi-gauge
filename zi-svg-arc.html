@@ -18,7 +18,7 @@
         left: 0;
       }
       #trailer { display: none; }
-      :host[disabled] #trailer {
+      :host([disabled]) #trailer {
         display: block;
       }
     </style>
@@ -53,6 +53,10 @@
         disabledColor: {
           type: String,
           value: '#cccccc'
+        },
+        disabled: {
+          type: Boolean,
+          reflectToAttribute: true
         },
         /** The color to use to draw the trailer frame. */
         color: {

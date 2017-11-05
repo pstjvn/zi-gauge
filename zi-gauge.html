@@ -141,7 +141,7 @@
         on-down="_onDown"
         on-up="_onUp"
         on-track="_onTrack">
-      <g class="knob">
+      <g class="knob" on-down="_onDownOnKnob" on-up="_onUpOnKnob">
         <g style="opacity:0.3;">
           <circle fill="#999999" cx="100" cy="27" r="10.7"/>
         </g>
@@ -527,9 +527,16 @@
           e.preventDefault();
           this._userInteraction = true;
           this._state.rect = this.getBoundingClientRect();
-          this.classList.add('active');
           this._recordInteraction(e);
           this._animation();
+        },
+
+        /**
+         * Separates the tracking of the knob - if it is not the direct
+         * target of the click event there's no point of zooming it.
+         */
+        _onDownOnKnob: function() {
+          if (!this.disabled) this.classList.add('active');
         },
 
         /**
@@ -551,8 +558,12 @@
          */
         _onUp: function() {
           this._userInteraction = false;
-          this.classList.remove('active');
           this._animation();
+        },
+
+        /** Separate tracking of the knob. */
+        _onUpOnKnob: function() {
+          this.classList.remove('active');
         },
 
         /**
@@ -640,9 +651,11 @@
         _onIconColorChanged: function() {
           if (!this.paintIcon) return;
           if (ShadyCSS) {
-            Polymer.dom(this).querySelector(
-                '[slot="icon"]').style.fill = this.disabled ?
-                this.disabledColor : this._iconColor;
+            var el = Polymer.dom(this).querySelector('[slot="icon"]');
+            if (el) {
+              el.style.fill = this.disabled ?
+                  this.disabledColor : this._iconColor;
+            }
           } else {
             this.updateStyles({
               '--current-color-value': (this.disabled ?
